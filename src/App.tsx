@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Button,
   styled
-} from '@mui/material'
+} from '@mui/material';
+import SignUp from './components/SignIn';
 import './App.css';
 
 const MenuButton = styled(Button)({
@@ -22,8 +23,12 @@ const MenuButton = styled(Button)({
 });
 
 function App() {
+  const [signUp, setSignUp] = useState(false);
+
   return (
     <div className="App">
+      {signUp && <SignUp />}
+
       <div className="App-header">
         <div className="wave"></div>
         <div className="wave"></div>
@@ -41,6 +46,7 @@ function App() {
 
         <MenuButton
           variant='contained'
+          onClick = {() => setSignUp(true)}
         >
           Get Started
         </MenuButton>
