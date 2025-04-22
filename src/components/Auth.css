@@ -1,0 +1,101 @@
+.SignIn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #E2C8B6, #FFF3EB);
+    font-family: 'Arial', sans-serif;
+    padding:40px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.SignIn h2 {
+    font-size: 2.5em;
+    font-weight: 900;
+    margin-top: 5%;
+    color: #AF6B46;
+    /*text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);*/
+}
+
+.SignIn label {
+    width: 10%;
+}
+
+.SignIn input[type='email'],
+.SignIn input[type='password'] {
+    width: calc(100% - 25%);
+    padding: 12px;
+    margin: 20px 0 0 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+    transition: border-color 0.3s ease;
+}
+
+.SignIn input[type='email']:focus,
+.SignIn input[type='password']:focus {
+    border-color: #404337;
+    outline: none;
+}
+
+.SignIn button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #606553;
+    color: #F0EFEB;
+    font-size: 1em;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex-basis: 100%;
+}
+
+.SignIn button:hover {
+    background-color: #4B4F40;
+    transform: translateY(-2px);
+}
+
+.SignIn button:active {
+    background-color: #4B4F40;
+    transform: translateY(0);
+}
+
+.SignIn a {
+    flex-basis: 100%;
+    margin-top: 20px;
+    color: #007BFF;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+    text-align: end;
+}
+
+.SignIn a:hover {
+    color: #0056b3;
+}
+
+.totalForm {
+    width: 30%;
+    max-width: 500%;
+}
+
+.form {
+    width: 100%;
+    max-width: 100%;
+    justify-content: start;
+}
+
+.SignUp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}

@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, { createContext, useContext, useEffect, useState} from 'react';
+import { Routes, Route } from 'react-router-dom';
 import config from '../config';
 import {
   getAuth,
@@ -7,30 +8,16 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import './SignIn.css';
+import './Auth.css';
 
 const auth = getAuth(config);
 
 // Sign in page and can link to Sign up
-interface SignInProps {
-  handleSignUp: () => void;
-}
+const MainSignIn = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-class MainSignIn extends React.Component < SignInProps > {
-  public state : any;
-
-  constructor(props: SignInProps) {
-    super(props);
-
-    this.state = {
-      email: '',
-      password: '',
-    };
-  }
-
-  handleSignIn = async (event: React.FormEvent) => {
-    const { email, password } = this.state;
-
+  const handleSignIn = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -41,7 +28,7 @@ class MainSignIn extends React.Component < SignInProps > {
   };
 
   // Sign in and Sign up with Google
-  handleSignInGoogle = () => {
+  const handleSignInGoogle = () => {
     let provider = new GoogleAuthProvider();
 
     signInWithPopup(auth, provider).then((result) => {
@@ -51,48 +38,42 @@ class MainSignIn extends React.Component < SignInProps > {
     });
   };
 
-  render () {
-    const { handleSignUp } = this.props;
-    const { email, password } = this.state;
-
-    return(
-      <div>
-        <h2>Sign In</h2>
-        <div>
-          <div>
-            <label htmlFor='email'>Email</label>
-            <input
-              type='email'
-              id='email'
-              name='email'
-              value={email}
-              onChange={(e) => {
-                this.setState({ email: e.target.value });
-              }}
-            />
-          </div>
-
-          <div>
-            <label htmlFor='password'>Password</label>
-            <input
-              type='password'
-              id='password'
-              name='password'
-              value={password}
-              onChange={(e) => {
-                this.setState({ password: e.target.value });
-              }}
-            />
-          </div>
-
-          <button onClick={this.handleSignIn}>Sign In</button>
-          <button onClick={this.handleSignInGoogle}>Sign In with Google</button>
-
-          <a href={'#'} onClick={handleSignUp}>Sign Up</a>
+  return(
+    <div className='SignIn'>
+      <h2>Sign In</h2>
+      <div className='totalForm'>
+        <div className='form'>
+          <label htmlFor='email'>Email</label>
+          <input
+            type='email'
+            id='email'
+            name='email'
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
         </div>
+
+        <div className='form'>
+          <label htmlFor='password'>Password</label>
+          <input
+            type='password'
+            id='password'
+            name='password'
+            value={password}
+          />
+        </div>
+
+        <button onClick={handleSignIn}>Sign In</button>
+        <button onClick={handleSignInGoogle}>Sign In with Google</button>
+
+        <a href='/signUp'>
+          Sign Up
+        </a>
       </div>
-    );
-  };
+    </div>
+  );
 }
 
 // Sign up
@@ -112,7 +93,7 @@ const SignUp = () => {
   };
 
   return (
-    <div>
+    <div className='SignUp'>
       <h2>Sign In</h2>
       <form onSubmit={handleSignUp}>
         <div>
@@ -153,5 +134,8 @@ const SignUp = () => {
     </div>
   );
 };
+
+// User Context
+
 
 export { MainSignIn, SignUp };

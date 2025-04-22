@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   styled
@@ -21,45 +22,35 @@ const MenuButton = styled(Button)({
   }
 });
 
-interface MenuProps {
-  handleSignIn: () => void;
-}
+const Menu = () => {
+  const navigate = useNavigate();
 
-class Menu extends React.Component < MenuProps > {
-  constructor(props : any) {
-    super(props);
-  }
-
-  render() {
-    const { handleSignIn } = this.props;
-
-    return (
-      <div className="Menu">
-        <div>
-          <div className="wave"></div>
-          <div className="wave"></div>
-          <div className="wave"></div>
-        </div>
-
-        <div className="Nav-bar">
-          Nav Bar
-        </div>
-
-        <div className="Menu-Content">
-          <h1 className="Title">
-            Start your journey with us
-          </h1>
-
-          <MenuButton
-            variant='contained'
-            onClick={handleSignIn}
-          >
-            Get Started
-          </MenuButton>
-        </div>
+  return (
+    <div className="Menu">
+      <div>
+        <div className="wave"></div>
+        <div className="wave"></div>
+        <div className="wave"></div>
       </div>
-    );
-  }
+
+      <div className="Nav-bar">
+        Nav Bar
+      </div>
+
+      <div className="Menu-Content">
+        <h1 className="Title">
+          Start your journey with us
+        </h1>
+
+        <MenuButton
+          variant='contained'
+          onClick={() => {navigate('/signIn')}}
+        >
+          Get Started
+        </MenuButton>
+      </div>
+    </div>
+  );
 }
 
 export default Menu;

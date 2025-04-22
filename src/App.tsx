@@ -1,53 +1,19 @@
 import React from 'react';
-import { MainSignIn, SignUp } from './components/SignIn';
 import Menu from './components/Menu'
 import './App.css';
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {MainSignIn, SignUp} from "./components/Auth";
 
-class App extends React.Component {
-  public state : any;
-  // public handleSignUp : any;
-
-  constructor(props: any) {
-    super(props);
-
-    this.state = {
-      authentication: 'menu',
-    }
-  }
-
-  handleSignUp = () => {
-    this.setState({
-      authentication: 'signUp',
-    })
-  }
-
-  handleSignIn = () => {
-    this.setState({
-      authentication: 'signIn',
-    })
-  }
-
-  render() {
-    const { authentication } = this.state;
-
-    return (
-      <div className="App">
-        {authentication == 'signIn' &&
-            <MainSignIn
-                handleSignUp={this.handleSignUp}
-            />
-        }
-        {authentication == 'signUp' &&
-          <SignUp />
-        }
-        {authentication == 'menu' &&
-          <Menu
-            handleSignIn={this.handleSignIn}
-          />
-        }
-      </div>
-    );
-  };
-}
+const App = () => {
+  return (
+    <div className="App">
+      <Routes>
+        <Route element={<Menu />} path={'/'}></Route>
+        <Route element={<MainSignIn />} path={'/signIn'}></Route>
+        <Route element={<SignUp />} path={'/signUp'}></Route>
+      </Routes>
+    </div>
+  );
+};
 
 export default App;
