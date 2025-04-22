@@ -34,7 +34,14 @@ const Menu = () => {
       </div>
 
       <div className="Nav-bar">
-        Nav Bar
+        <div className="Nav-bar-Logo">
+          <p>Chatroom</p>
+        </div>
+        <div className="Nav-bar-Links">
+          <a href="/">Home</a>
+          <a href="/signIn">Sign In</a>
+          <a href="/signUp">Sign Up</a>
+        </div>
       </div>
 
       <div className="Menu-Content">

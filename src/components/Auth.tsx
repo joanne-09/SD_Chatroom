@@ -68,9 +68,8 @@ const MainSignIn = () => {
         <button onClick={handleSignIn}>Sign In</button>
         <button onClick={handleSignInGoogle}>Sign In with Google</button>
 
-        <a href='/signUp'>
-          Sign Up
-        </a>
+        <a href='/signUp'>Sign Up</a>
+        <a href='/'>Back to Home</a>
       </div>
     </div>
   );
@@ -94,8 +93,8 @@ const SignUp = () => {
 
   return (
     <div className='SignUp'>
-      <h2>Sign In</h2>
-      <form onSubmit={handleSignUp}>
+      <h2>Sign Up</h2>
+      <div>
         <div>
           <label>Name</label>
           <input
@@ -129,8 +128,9 @@ const SignUp = () => {
           />
         </div>
 
-        <button type='submit'>Register</button>
-      </form>
+        <button onClick={handleSignUp}>Register</button>
+        <a href='/'>Back to Home</a>
+      </div>
     </div>
   );
 };

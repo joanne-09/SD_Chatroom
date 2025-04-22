@@ -7,11 +7,13 @@ import {MainSignIn, SignUp} from "./components/Auth";
 const App = () => {
   return (
     <div className="App">
-      <Routes>
-        <Route element={<Menu />} path={'/'}></Route>
-        <Route element={<MainSignIn />} path={'/signIn'}></Route>
-        <Route element={<SignUp />} path={'/signUp'}></Route>
-      </Routes>
+      <Router>
+        <Routes>
+          <Route element={<Menu />} path={'/'}></Route>
+          <Route element={<MainSignIn />} path={'/signIn'}></Route>
+          <Route element={<SignUp />} path={'/signUp'}></Route>
+        </Routes>
+      </Router>
     </div>
   );
 };
