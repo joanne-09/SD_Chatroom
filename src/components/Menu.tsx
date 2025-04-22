@@ -22,7 +22,7 @@ const MenuButton = styled(Button)({
 });
 
 interface MenuProps {
-  handleSignUp: () => void;
+  handleSignIn: () => void;
 }
 
 class Menu extends React.Component < MenuProps > {
@@ -31,7 +31,7 @@ class Menu extends React.Component < MenuProps > {
   }
 
   render() {
-    const { handleSignUp } = this.props;
+    const { handleSignIn } = this.props;
 
     return (
       <div className="Menu">
@@ -52,7 +52,7 @@ class Menu extends React.Component < MenuProps > {
 
           <MenuButton
             variant='contained'
-            onClick={handleSignUp}
+            onClick={handleSignIn}
           >
             Get Started
           </MenuButton>

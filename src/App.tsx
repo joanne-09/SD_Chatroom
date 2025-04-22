@@ -1,5 +1,5 @@
 import React from 'react';
-import SignUp from './components/SignIn';
+import { MainSignIn, SignUp } from './components/SignIn';
 import Menu from './components/Menu'
 import './App.css';
 
@@ -11,23 +11,38 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      signUp: false,
+      authentication: 'menu',
     }
   }
 
   handleSignUp = () => {
     this.setState({
-      signUp: true,
+      authentication: 'signUp',
+    })
+  }
+
+  handleSignIn = () => {
+    this.setState({
+      authentication: 'signIn',
     })
   }
 
   render() {
+    const { authentication } = this.state;
+
     return (
       <div className="App">
-        {this.state.signUp && <SignUp />}
-        {!this.state.signUp &&
+        {authentication == 'signIn' &&
+            <MainSignIn
+                handleSignUp={this.handleSignUp}
+            />
+        }
+        {authentication == 'signUp' &&
+          <SignUp />
+        }
+        {authentication == 'menu' &&
           <Menu
-            handleSignUp={this.handleSignUp}
+            handleSignIn={this.handleSignIn}
           />
         }
       </div>
