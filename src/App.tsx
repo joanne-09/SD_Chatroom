@@ -1,58 +1,38 @@
-import React, {useState} from 'react';
-import {
-  Button,
-  styled
-} from '@mui/material';
+import React from 'react';
 import SignUp from './components/SignIn';
+import Menu from './components/Menu'
 import './App.css';
 
-const MenuButton = styled(Button)({
-  width: 'auto',
-  fontSize: 16,
-  zIndex: 2,
-  backgroundColor: '#B97550',
-  borderRadius: '50px',
-  marginTop: '20px',
-  transition: 'marginBottom 3s',
-  '&:hover': {
-    backgroundColor: '#AF6B46',
-    boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)',
-    transform: 'translateY(-10px)',
-    transition: '0.1s',
+class App extends React.Component {
+  public state : any;
+  // public handleSignUp : any;
+
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      signUp: false,
+    }
   }
-});
 
-function App() {
-  const [signUp, setSignUp] = useState(false);
+  handleSignUp = () => {
+    this.setState({
+      signUp: true,
+    })
+  }
 
-  return (
-    <div className="App">
-      {signUp && <SignUp />}
-
-      <div className="App-header">
-        <div className="wave"></div>
-        <div className="wave"></div>
-        <div className="wave"></div>
+  render() {
+    return (
+      <div className="App">
+        {this.state.signUp && <SignUp />}
+        {!this.state.signUp &&
+          <Menu
+            handleSignUp={this.handleSignUp}
+          />
+        }
       </div>
-
-      <div className="Nav-bar">
-        Nav Bar
-      </div>
-
-      <div className="Menu-Content">
-        <h1 className="Title">
-          Start your journey with us
-        </h1>
-
-        <MenuButton
-          variant='contained'
-          onClick = {() => setSignUp(true)}
-        >
-          Get Started
-        </MenuButton>
-      </div>
-    </div>
-  );
+    );
+  };
 }
 
 export default App;

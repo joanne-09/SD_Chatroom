@@ -1,0 +1,108 @@
+.Menu {
+    width: 100%;
+    height: 100vh;
+    margin: auto;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: auto;
+    background: linear-gradient(315deg, #DDBEA9 3%, #FFE8D6 38%, #B7B7A4 68%, #A5A58D 98%) fixed;
+    animation: gradient 5s ease infinite;
+    background-size: 400% 400%;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0 0;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.wave {
+    background: rgb(255 255 255 / 25%);
+    border-radius: 1000% 1000% 0 0;
+    position: fixed;
+    width: 1500%;
+    height: 20em;
+    animation: wave 10s -3s linear infinite;
+    transform: translate3d(0, 0, 0);
+    opacity: 0.8;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.wave:nth-of-type(2) {
+    bottom: -1.25em;
+    animation: wave 18s linear reverse infinite;
+    opacity: 0.8;
+}
+
+.wave:nth-of-type(3) {
+    bottom: -2.5em;
+    animation: wave 20s -1s reverse infinite;
+    opacity: 0.9;
+}
+
+@keyframes wave {
+    2% {
+        transform: translateX(1);
+    }
+
+    25% {
+        transform: translateX(-50%);
+    }
+
+    50% {
+        transform: translateX(-75%);
+    }
+
+    75% {
+        transform: translateX(-50%);
+    }
+
+    100% {
+        transform: translateX(1);
+    }
+}
+
+.Nav-bar {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    background-color: #F0EFEB;
+}
+
+.Menu-Content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Title {
+    font-size: 4em;
+    font-weight: 900;
+    margin-top: 15%;
+    background: linear-gradient(90deg, #D0A68A 0%, #FFD1AD 25%, #A5A58D 50%, #939376 75%, #4B4F40 100%);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: word-gradient 5s ease infinite;
+    transition: margin-bottom 3s;
+    z-index: 2;
+}
+
+@keyframes word-gradient {
+    0% {
+        background-position: 0 0;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}
