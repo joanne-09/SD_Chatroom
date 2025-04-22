@@ -6,6 +6,11 @@
       ".indexOn": ["email"],
       ".read": "auth != null",
       ".write": "auth != null"
+    },
+    "chatrooms": {
+      ".indexOn": ["id"],
+      ".read": "auth != null",
+      ".write": "auth != null"
     }
   }
 }

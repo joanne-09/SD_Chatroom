@@ -32,6 +32,19 @@ const MainSignIn = () => {
     let provider = new GoogleAuthProvider();
 
     signInWithPopup(auth, provider).then((result) => {
+      const user = result.user;
+      try {
+        const userRef = ref(database, 'user-data');
+        const newUser = {
+          name: user.displayName,
+          email: user.email,
+          password: null,
+        };
+        push(userRef, newUser);
+      }catch (error) {
+        console.error('Error saving user data:', error);
+      }
+
       alert('Signed in Successfully!');
       navigate('/chatHome');
     }).catch((error) => {

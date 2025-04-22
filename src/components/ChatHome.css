@@ -1,5 +1,6 @@
 .ChatHome {
-    background-color: #FFF3EB;
+    width: 100%;
+    height: 100vh;
 }
 
 .Nav-bar {
@@ -40,4 +41,14 @@
 .Nav-bar-Links a:hover {
     color: #AF6B46;
     transform: scale(1.1);
+}
+
+.ChatHome-Content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding-top: 60px; /* Adjust for the height of the Nav-bar */
+    background-color: #FFE8D6;
 }
