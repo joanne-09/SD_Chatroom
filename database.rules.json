@@ -1,6 +1,11 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false
+    ".read": true,
+    ".write": true,
+    "user-data": {
+      ".indexOn": ["email"],
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
   }
 }

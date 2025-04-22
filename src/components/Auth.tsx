@@ -1,21 +1,20 @@
 import React, { createContext, useContext, useEffect, useState} from 'react';
-import { Routes, Route } from 'react-router-dom';
-import config from '../config';
+import {auth, database} from '../config';
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
+import { ref, push, set } from 'firebase/database';
+import { useNavigate } from "react-router-dom";
 import './Auth.css';
-
-const auth = getAuth(config);
 
 // Sign in page and can link to Sign up
 const MainSignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSignIn = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -62,11 +61,24 @@ const MainSignIn = () => {
             id='password'
             name='password'
             value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
         </div>
-
-        <button onClick={handleSignIn}>Sign In</button>
-        <button onClick={handleSignInGoogle}>Sign In with Google</button>
+        
+        <button onClick={(event) => {
+          handleSignIn(event);
+          navigate('/chatHome');
+        }}>
+          Sign In
+        </button>
+        <button onClick={() => {
+          handleSignInGoogle();
+          navigate('/chatHome');
+        }}>
+          Sign In with Google
+        </button>
 
         <a href='/signUp'>Sign Up</a>
         <a href='/'>Back to Home</a>
@@ -80,12 +92,19 @@ const SignUp = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSignUp = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      alert('User created successfully!');
+      let newUser = {
+        name: name,
+        email: email,
+        password: password,
+      }
+      let userData = ref(database, 'user-data')
+      push(userData, newUser);
     } catch {
       alert('Error creating user');
     }
@@ -128,14 +147,17 @@ const SignUp = () => {
           />
         </div>
 
-        <button onClick={handleSignUp}>Register</button>
+        <button onClick={(event) => {
+          handleSignUp(event);
+          navigate('/chatHome');
+        }}>
+          Register
+        </button>
+        
         <a href='/'>Back to Home</a>
       </div>
     </div>
   );
 };
-
-// User Context
-
 
 export { MainSignIn, SignUp };
