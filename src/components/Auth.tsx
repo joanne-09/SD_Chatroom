@@ -21,6 +21,7 @@ const MainSignIn = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       alert('User signed in successfully!');
+      navigate('/chatHome');
     } catch {
       alert('Error signing in');
     }
@@ -32,6 +33,7 @@ const MainSignIn = () => {
 
     signInWithPopup(auth, provider).then((result) => {
       alert('Signed in Successfully!');
+      navigate('/chatHome');
     }).catch((error) => {
       alert('Error signing in with Google');
     });
@@ -67,16 +69,10 @@ const MainSignIn = () => {
           />
         </div>
         
-        <button onClick={(event) => {
-          handleSignIn(event);
-          navigate('/chatHome');
-        }}>
+        <button onClick={handleSignIn}>
           Sign In
         </button>
-        <button onClick={() => {
-          handleSignInGoogle();
-          navigate('/chatHome');
-        }}>
+        <button onClick={handleSignInGoogle}>
           Sign In with Google
         </button>
 
@@ -105,6 +101,8 @@ const SignUp = () => {
       }
       let userData = ref(database, 'user-data')
       push(userData, newUser);
+      alert('User created successfully!');
+      navigate('/chatHome');
     } catch {
       alert('Error creating user');
     }
@@ -147,10 +145,7 @@ const SignUp = () => {
           />
         </div>
 
-        <button onClick={(event) => {
-          handleSignUp(event);
-          navigate('/chatHome');
-        }}>
+        <button onClick={handleSignUp}>
           Register
         </button>
         
