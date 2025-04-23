@@ -6,7 +6,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { ref, push, set } from 'firebase/database';
+import { ref, push, get, query, orderByChild, equalTo } from 'firebase/database';
 import { useNavigate } from "react-router-dom";
 import './Auth.css';
 
@@ -31,16 +31,29 @@ const MainSignIn = () => {
   const handleSignInGoogle = () => {
     let provider = new GoogleAuthProvider();
 
-    signInWithPopup(auth, provider).then((result) => {
+    signInWithPopup(auth, provider).then(async (result) => {
       const user = result.user;
       try {
         const userRef = ref(database, 'user-data');
-        const newUser = {
-          name: user.displayName,
-          email: user.email,
-          password: null,
-        };
-        push(userRef, newUser);
+        const checkUser = await get(userRef);
+
+        if(checkUser.exists()){
+          const allUsers = checkUser.val();
+          const matchingUserKey = Object.keys(allUsers).find(
+            key => allUsers[key].email === user.email
+          );
+
+          if (matchingUserKey) {
+            const matchingUser = allUsers[matchingUserKey];
+          }else{
+            const newUser = {
+              name: user.displayName,
+              email: user.email,
+              password: null,
+            };
+            push(userRef, newUser);
+          }
+        }
       }catch (error) {
         console.error('Error saving user data:', error);
       }
