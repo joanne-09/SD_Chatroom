@@ -33,30 +33,7 @@ const MainSignIn = () => {
 
     signInWithPopup(auth, provider).then(async (result) => {
       const user = result.user;
-      try {
-        const userRef = ref(database, 'user-data');
-        const checkUser = await get(userRef);
-
-        if(checkUser.exists()){
-          const allUsers = checkUser.val();
-          const matchingUserKey = Object.keys(allUsers).find(
-            key => allUsers[key].email === user.email
-          );
-
-          if (matchingUserKey) {
-            const matchingUser = allUsers[matchingUserKey];
-          }else{
-            const newUser = {
-              name: user.displayName,
-              email: user.email,
-              password: null,
-            };
-            push(userRef, newUser);
-          }
-        }
-      }catch (error) {
-        console.error('Error saving user data:', error);
-      }
+      await handleAddNewGoogleUser(user);
 
       alert('Signed in Successfully!');
       navigate('/chatHome');
@@ -64,6 +41,33 @@ const MainSignIn = () => {
       alert('Error signing in with Google');
     });
   };
+
+  const handleAddNewGoogleUser = async (user: any) => {
+    try {
+      const userRef = ref(database, 'user-data');
+      const checkUser = await get(userRef);
+
+      if(checkUser.exists()){
+        const allUsers = checkUser.val();
+        const matchingUserKey = Object.keys(allUsers).find(
+          key => allUsers[key].email === user.email
+        );
+
+        if (matchingUserKey) {
+          const matchingUser = allUsers[matchingUserKey];
+        }else{
+          const newUser = {
+            userId: user.uid,
+            name: user.displayName,
+            email: user.email,
+          };
+          push(userRef, newUser);
+        }
+      }
+    }catch (error) {
+      console.error('Error saving user data:', error);
+    }
+  }
 
   return(
     <div className='SignIn'>
@@ -121,9 +125,9 @@ const SignUp = () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       let newUser = {
+        userId: auth.currentUser?.uid,
         name: name,
         email: email,
-        password: password,
       }
       let userData = ref(database, 'user-data')
       push(userData, newUser);
