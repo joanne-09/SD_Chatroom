@@ -4,7 +4,8 @@ import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import Menu from './components/Menu'
 import {MainSignIn, SignUp} from "./components/Auth";
 import ChatHome from "./components/ChatHome";
-import { UserChange } from './components/UserContext';
+import Chatroom from './components/Chatroom';
+import { UserChange } from './helper/UserContext';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
             <Route element={<MainSignIn />} path={'/signIn'}></Route>
             <Route element={<SignUp />} path={'/signUp'}></Route>
             <Route element={<ChatHome />} path={'/chatHome'}></Route>
+            <Route element={<Chatroom />} path={'/chatroom/:roomId'}></Route>
           </Routes>
         </Router>
       </div>

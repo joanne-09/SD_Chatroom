@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { ref, push, get, query, orderByChild, equalTo } from 'firebase/database';
 import { useNavigate } from "react-router-dom";
+import { createUserData, getUserByEmail } from '../helper/AccessUser'
 import './Auth.css';
 
 // Sign in page and can link to Sign up
@@ -32,8 +33,7 @@ const MainSignIn = () => {
     let provider = new GoogleAuthProvider();
 
     signInWithPopup(auth, provider).then(async (result) => {
-      const user = result.user;
-      await handleAddNewGoogleUser(user);
+      await handleAddNewGoogleUser(result.user);
 
       alert('Signed in Successfully!');
       navigate('/chatHome');
@@ -44,25 +44,10 @@ const MainSignIn = () => {
 
   const handleAddNewGoogleUser = async (user: any) => {
     try {
-      const userRef = ref(database, 'user-data');
-      const checkUser = await get(userRef);
-
-      if(checkUser.exists()){
-        const allUsers = checkUser.val();
-        const matchingUserKey = Object.keys(allUsers).find(
-          key => allUsers[key].email === user.email
-        );
-
-        if (matchingUserKey) {
-          const matchingUser = allUsers[matchingUserKey];
-        }else{
-          const newUser = {
-            userId: user.uid,
-            name: user.displayName,
-            email: user.email,
-          };
-          push(userRef, newUser);
-        }
+      const userData = await getUserByEmail(user.email);
+      if (!userData) {
+        await createUserData(user.uid, user.displayName, user.email);
+        console.log('User data created successfully!');
       }
     }catch (error) {
       console.error('Error saving user data:', error);
@@ -124,13 +109,7 @@ const SignUp = () => {
     event.preventDefault();
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      let newUser = {
-        userId: auth.currentUser?.uid,
-        name: name,
-        email: email,
-      }
-      let userData = ref(database, 'user-data')
-      push(userData, newUser);
+      createUserData(auth.currentUser?.uid!, name, email);
       alert('User created successfully!');
       navigate('/chatHome');
     } catch {

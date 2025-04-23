@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -15,7 +15,8 @@ import {
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { auth } from '../config';
-import { UseUser } from './UserContext';
+import { UseUser } from '../helper/UserContext';
+import {createNewRoom, joinExistRoom, getUserRooms} from "../helper/AccessRoom";
 import './ChatHome.css';
 
 // Button for Start a new Chat
@@ -40,9 +41,17 @@ const NewButton = styled(Button)({
 
 const ChatHome = () => {
   const navigate = useNavigate();
-  const { authUser, profile } = UseUser();
+  const { authUser, profile, loading } = UseUser();
 
   const [ openOption, setOpenOption ] = useState(false);
+
+  // Check if user is authenticated
+  useEffect(() => {
+    if (!authUser && !loading) {
+      alert("No authenticated user found.");
+      navigate('/');
+    }
+  }, [authUser, loading, navigate]);
 
   // Log Out
   const handleLogOut = () => {
@@ -70,12 +79,32 @@ const ChatHome = () => {
   const handleStartChat = () => {
     // Logic to start a new chat
     alert("Starting a new chat...");
+    const roomName = prompt("Enter the name of the new chat room:");
+    if (roomName && authUser) {
+      createNewRoom(roomName, authUser.uid).then((roomId) => {
+        navigate(`/chatroom/${roomId}`);
+      }).catch((error) => {
+        alert("Error creating new chat room: " + error.message);
+      });
+    }
     setOpenOption(false);
   };
 
-  const handleJoinChat = () => {
+  const handleJoinChat = async () => {
     // Logic to join an existing chat
     alert("Joining an existing chat...");
+    try{
+      const roomId = prompt("Enter the ID of the chat room to join:");
+      if (roomId && authUser) {
+        await joinExistRoom(roomId, authUser.uid);
+        console.log('Joining the room:', roomId);
+        navigate(`/chatroom/${roomId}`);
+      } else {
+        alert("Invalid room ID or user not authenticated.");
+      }
+    }catch(error){
+      alert("Error joining chat room: " + error);
+    }
     setOpenOption(false);
   };
 
