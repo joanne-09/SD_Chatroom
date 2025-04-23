@@ -1,6 +1,6 @@
 import { FieldValue } from "firebase/firestore";
 
-export interface Chatroom {
+export interface ChatroomData {
     roomId: string;
     name: string;
     createdAt: FieldValue;

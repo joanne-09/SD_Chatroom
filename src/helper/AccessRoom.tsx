@@ -11,12 +11,12 @@ import {
     serverTimestamp,
 } from 'firebase/firestore';
 import { auth, firestore } from '../config';
-import { Chatroom } from './Interface';
+import { ChatroomData } from './Interface';
 
 // Create a new chatroom
 const createNewRoom = async(roomName: string, userId: string) => {
     try {
-        const roomData: Chatroom = {
+        const roomData: ChatroomData = {
             roomId: '',
             name: roomName,
             createdAt: serverTimestamp(),
@@ -63,20 +63,16 @@ const findRoomById = async(roomId: string) => {
     try {
         if(roomId){
             const roomRef = doc(firestore, 'chatrooms', roomId);
-            
-            getDoc(roomRef).then((roomSnap) => {
-                if(roomSnap.exists()) {
-                    const roomData = roomSnap.data();
-                    console.log('Room data:', roomData);
-                    return roomData;
-                } else {
-                    console.log('No such room!');
-                }
-            }).catch((error) => {
-                console.error('Error getting room:', error);
-            });
+            const roomSnap = await getDoc(roomRef);
+
+            if(roomSnap.exists()) {
+                const roomData = roomSnap.data() as ChatroomData;
+                return roomData;
+            }else{
+                alert('Room does not exist!');
+                return null;
+            }
         }
-        return null;
     }catch(error){
         alert('Error finding room:' + error);
         throw error;

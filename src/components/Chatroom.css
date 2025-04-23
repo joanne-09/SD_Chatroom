@@ -3,96 +3,49 @@
   background-color: #666;
 }
 
-.chat-room {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.chat-header {
+.Nav-bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #F0EFEB;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background-color: #AF6B46;
-  color: #FFF3EB;
-}
-
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.message {
-  padding: 10px 15px;
-  border-radius: 10px;
-  max-width: 70%;
-}
-
-.own-message {
-  align-self: flex-end;
-  background-color: #d8e8f0;
-}
-
-.other-message {
-  align-self: flex-start;
-  background-color: #f0f0f0;
-}
-
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.message-content {
-  word-break: break-word;
-}
-
-.message-form {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid #ddd;
-}
-
-.message-form input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-right: 10px;
-}
-
-.message-form button {
   padding: 0 20px;
-  background-color: #AF6B46;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
-.loading, .error {
+.Nav-bar-Logo {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #4B4F40;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.Nav-bar-Links {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 1.2rem;
-  color: #666;
+  gap: 20px;
 }
 
-.error {
-  color: #d32f2f;
+.Nav-bar-Links p {
+  text-decoration: none;
+  font-size: 1em;
+  color: #4B4F40;
+  font-weight: 500;
 }
 
-.no-messages {
-  text-align: center;
-  color: #999;
-  margin: 20px;
+.Nav-bar-Links a {
+  text-decoration: none;
+  font-size: 1em;
+  color: #4B4F40;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.Nav-bar-Links a:hover {
+  color: #AF6B46;
+  transform: scale(1.1);
 }
