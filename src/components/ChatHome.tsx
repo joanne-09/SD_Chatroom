@@ -4,10 +4,6 @@ import {
   Button,
   styled,
   Stack,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -16,7 +12,9 @@ import {
 import { Add } from '@mui/icons-material';
 import { auth } from '../config';
 import { UseUser } from '../helper/UserContext';
-import {createNewRoom, joinExistRoom, getUserRooms} from "../helper/AccessRoom";
+import {createNewRoom, joinExistRoom} from "../helper/AccessRoom";
+import { getUserRooms, addNewRooms } from '../helper/AccessUser';
+import { UserRoom } from '../helper/Interface';
 import './ChatHome.css';
 
 // Button for Start a new Chat
@@ -43,7 +41,9 @@ const ChatHome = () => {
   const navigate = useNavigate();
   const { authUser, profile, loading } = UseUser();
 
+  const [ isLoading, setIsLoading ] = useState(true);
   const [ openOption, setOpenOption ] = useState(false);
+  const [ rooms, setRooms ] = useState<UserRoom[]>([]);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -65,6 +65,23 @@ const ChatHome = () => {
     }).catch((error) => {
       alert("Error signing out: " + error.message);
     });
+  }
+
+  // Get All Rooms for User
+  useEffect(() => {
+    const fetchRooms = async () => {
+      if (authUser && !loading) {
+        const unsubscribe = await addNewRooms(authUser.uid, (rooms: UserRoom[]) => {
+          setRooms(rooms);
+        });
+        return () => unsubscribe();
+      }
+    };
+    fetchRooms();
+  }, [authUser, loading]);
+
+  if(loading) {
+    return <p>Loading...</p>;
   }
 
   // Option List when Click on New Button
@@ -125,6 +142,20 @@ const ChatHome = () => {
       </div>
 
       <div className='ChatHome-Content'>
+        <div className='user-rooms'>
+          {
+            rooms ? (
+              rooms.map((room) => (
+                <div key={room.id} className='room-item'>
+                  <a onClick={() => navigate(`/chatroom/${room.roomId}`)}>{room.roomName}</a>
+                </div>
+              ))
+            ) : (
+              <p>No rooms Joined.</p>
+            )
+          }
+        </div>
+
         <NewButton 
           variant='outlined'
           size="large"

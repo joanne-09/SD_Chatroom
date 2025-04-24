@@ -21,4 +21,12 @@ export interface UserData {
     userId: string;
     name: string;
     email: string;
+    rooms?: UserRoom[];
+    friends?: string[];
+}
+
+export interface UserRoom {
+    id?: string;
+    roomId: string;
+    roomName: string;
 }

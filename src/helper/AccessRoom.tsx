@@ -11,7 +11,9 @@ import {
     serverTimestamp,
 } from 'firebase/firestore';
 import { auth, firestore } from '../config';
-import { ChatroomData } from './Interface';
+import { addRoomToUser } from './AccessUser';
+import { ChatroomData, UserData } from './Interface';
+import { error } from 'console';
 
 // Create a new chatroom
 const createNewRoom = async(roomName: string, userId: string) => {
@@ -26,6 +28,13 @@ const createNewRoom = async(roomName: string, userId: string) => {
 
         const roomRef = await addDoc(collection(firestore, 'chatrooms'), roomData);
         await setDoc(doc(firestore, 'chatrooms', roomRef.id), { roomId: roomRef.id }, { merge: true });
+
+        addRoomToUser(userId, roomRef.id, roomName).then(() => {
+            console.log('Room added to user:', userId);
+        }).catch((error) => {
+            console.error('Error adding room to user:', error);
+        });
+
         console.log('New room created with ID:', roomRef.id);
         return roomRef.id;
     }catch(error){
@@ -46,6 +55,14 @@ const joinExistRoom = async(roomId: string, userId: string) => {
             if (!participants.includes(userId)) {
                 participants.push(userId);
                 await setDoc(roomRef, { participants }, { merge: true });
+
+                addRoomToUser(userId, roomId, roomData.name).then(() => {
+                    console.log('Room added to user:', userId);
+                
+                }).catch(error => {
+                    console.error('Error adding room to user:', error);
+                });
+
                 alert(`Added to room: ${roomId}`);
             } else {
                 alert(`Already in room: ${roomId}`);
@@ -79,25 +96,4 @@ const findRoomById = async(roomId: string) => {
     }
 }
 
-const getUserRooms = async(userId: string) => {
-    try {
-        const roomQuery = query(
-            collection(firestore, 'chatrooms'),
-            where('participants', 'array-contains', userId),
-            orderBy('createdAt', 'desc')
-        );
-        const unsubscribe = onSnapshot(roomQuery, (querySnapshot) => {
-            const rooms: any[] = [];
-            querySnapshot.forEach((doc) => {
-                rooms.push({ id: doc.id, ...doc.data() });
-            });
-            console.log('User rooms:', rooms);
-        });
-        return unsubscribe;
-    }catch(error){
-        alert('Error getting user rooms:' + error);
-        throw error;
-    }
-}
-
-export {createNewRoom, getUserRooms, joinExistRoom, findRoomById};
+export {createNewRoom, joinExistRoom, findRoomById};
