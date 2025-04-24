@@ -10,8 +10,7 @@ import {
     where,
     onSnapshot,
 } from 'firebase/firestore';
-import { UserData, UserRoom } from './Interface';
-import { callbackify } from 'util';
+import { UserData, UserRoom, UserFriend } from './Interface';
 
 export const createUserData = async (userId: string, name: string, email: string) => {
     const userData: UserData = {
@@ -19,18 +18,17 @@ export const createUserData = async (userId: string, name: string, email: string
         name,
         email,
     };
-    const userRef = await addDoc(collection(firestore, 'users'), userData);
-    return userRef.id;
+    
+    await setDoc(doc(firestore, 'users', userId), userData);
+    return userId;
 }
 
 export const getUserById = async (userId: string) => {
     try{
-        const userQuery = query(collection(firestore, 'users'), where('userId', '==', userId));
-        const userSnap = await getDocs(userQuery);
+        const userSnap = await getDoc(doc(firestore, 'users', userId));
 
-        if (!userSnap.empty) {
-            const userDoc = userSnap.docs[0];
-            return userDoc.data() as UserData;
+        if (userSnap.exists()) {
+            return userSnap.data() as UserData;
         } else {
             return null;
         }
@@ -60,9 +58,7 @@ export const getUserByEmail = async (email: string) => {
 
 export const addRoomToUser = async (userId: string, roomId: string, roomName: string) => {
     try {
-        const userRef = query(collection(firestore, 'users'), where('userId', '==', userId));
-        const userSnap = (await getDocs(userRef)).docs[0];
-        const userRoom = collection(firestore, 'users', userSnap.id, 'rooms');
+        const userRoom = collection(firestore, 'users', userId, 'rooms');
 
         const roomData: UserRoom = {
             roomId,
@@ -96,7 +92,7 @@ export const getUserRooms = async (userId: string) => {
     }
 }
 
-export const addNewRooms = async (userId: string, callback: (rooms: UserRoom[]) => void) => {
+export const newRoomsAdded = async (userId: string, callback: (rooms: UserRoom[]) => void) => {
     const userRef = query(collection(firestore, 'users'), where('userId', '==', userId));
     const userSnap = (await getDocs(userRef)).docs[0];
     const roomRef = collection(firestore, 'users', userSnap.id, 'rooms');
@@ -115,4 +111,79 @@ export const addNewRooms = async (userId: string, callback: (rooms: UserRoom[]) 
     });
 
     return unsubscribe;
+}
+
+const friendAlreadyExists = async (userId: string, friendEmail: string) => {
+    try {
+        const userFriend = collection(firestore, 'users', userId, 'friends');
+        const friendQuery = query(userFriend, where('friendEmail', '==', friendEmail));
+        const friendSnap = await getDocs(friendQuery);
+
+        return !friendSnap.empty;
+    } catch (error) {
+        console.error('Error checking if friend already exists:', error);
+        return false;
+    }
+}
+
+export const addFriendToUser = async (userId: string, friendEmail: string) => {
+    try {
+        const userFriend = collection(firestore, 'users', userId, 'friends');
+
+        getUserByEmail(friendEmail).then((friendData) => {
+            if(friendData){
+                const friendId = friendData.userId;
+                const friendName = friendData.name || 'Unknown User';
+
+                friendAlreadyExists(userId, friendEmail).then((exists) => {
+                    if(exists){
+                        console.log('Friend already exists!');
+                        return;
+                    }else{
+                        const newFriend: UserFriend = {
+                            friendId,
+                            friendEmail,
+                            friendName,
+                        }
+                        addDoc(userFriend, newFriend);
+
+                        getUserById(userId).then((userData) => {
+                            if(userData){
+                                addFriendToUser(friendId, userData.email);
+                            }
+                        });
+
+                        console.log('Friend added to user:', friendId);
+                    }
+                })
+            }else{
+                console.log('User not found!');
+            }
+        }).catch((error) => {
+            console.error('Error fetching friend data:', error);
+        });
+    }catch(error){
+        console.error('Error adding friend to user:', error);
+        throw error;
+    }
+}
+
+export const getUserFriends = async (userId: string) => {
+    try{
+        getUserById(userId).then((userData) => {
+            if(userData){
+                const friends = userData.friends || [];
+                return friends;
+            }else{
+                console.log('User not found!');
+                return null;
+            }
+        }).catch((error) => {
+            console.error('Error fetching user data:', error);
+            return null;
+        });
+    }catch(error){
+        console.error('Error adding user friends:', error);
+        return null;
+    }
 }

@@ -18,15 +18,23 @@ export interface MessageData {
 }
 
 export interface UserData {
+    id?: string;
     userId: string;
     name: string;
     email: string;
     rooms?: UserRoom[];
-    friends?: string[];
+    friends?: UserFriend[];
 }
 
 export interface UserRoom {
     id?: string;
     roomId: string;
     roomName: string;
+}
+
+export interface UserFriend {
+    id?: string;
+    friendId: string;
+    friendEmail: string;
+    friendName: string;
 }

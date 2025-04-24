@@ -9,13 +9,14 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, Create } from '@mui/icons-material';
 import { auth } from '../config';
 import { ChatroomBlock } from './ChatroomBlock';
 import { UseUser } from '../helper/UserContext';
 import {createNewRoom, joinExistRoom} from "../helper/AccessRoom";
-import { getUserRooms, addNewRooms } from '../helper/AccessUser';
+import { getUserRooms, newRoomsAdded, addFriendToUser } from '../helper/AccessUser';
 import { UserRoom } from '../helper/Interface';
+import { AccountMenu } from '../helper/MuiComponents';
 import './ChatHome.css';
 
 // Button for Start a new Chat
@@ -72,7 +73,7 @@ const ChatHome = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       if (authUser && !loading) {
-        const unsubscribe = await addNewRooms(authUser.uid, (rooms: UserRoom[]) => {
+        const unsubscribe = await newRoomsAdded(authUser.uid, (rooms: UserRoom[]) => {
           setRooms(rooms);
         });
         return () => unsubscribe();
@@ -137,8 +138,9 @@ const ChatHome = () => {
           )}
         </div>
         <div className="Nav-bar-Links">
-          <a onClick={handleLogOut}>Log Out</a>
-          <a href='/signIn'>Account</a>
+          <AccountMenu 
+            handleLogOut={handleLogOut}
+          />
         </div>
       </div>
 

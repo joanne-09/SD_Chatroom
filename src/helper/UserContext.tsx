@@ -21,6 +21,7 @@ const UserChange = ({children} : {children: ReactNode}) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         console.log("Auth state changed:", currentUser.email || "No user");
+        setUser(prev => ({...prev, authUser: currentUser, loading: true}));
         
         // Fetch additional user data from Realtime Database
         try {

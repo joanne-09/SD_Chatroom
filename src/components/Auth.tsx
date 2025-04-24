@@ -6,7 +6,6 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { ref, push, get, query, orderByChild, equalTo } from 'firebase/database';
 import { useNavigate } from "react-router-dom";
 import { createUserData, getUserByEmail } from '../helper/AccessUser'
 import './Auth.css';
