@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { auth } from '../config';
+import { ChatroomBlock } from './ChatroomBlock';
 import { UseUser } from '../helper/UserContext';
 import {createNewRoom, joinExistRoom} from "../helper/AccessRoom";
 import { getUserRooms, addNewRooms } from '../helper/AccessUser';
@@ -146,9 +147,10 @@ const ChatHome = () => {
           {
             rooms ? (
               rooms.map((room) => (
-                <div key={room.id} className='room-item'>
-                  <a onClick={() => navigate(`/chatroom/${room.roomId}`)}>{room.roomName}</a>
-                </div>
+                <ChatroomBlock 
+                  key={room.id} 
+                  room={room} 
+                />
               ))
             ) : (
               <p>No rooms Joined.</p>

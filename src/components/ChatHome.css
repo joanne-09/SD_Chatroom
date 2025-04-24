@@ -44,10 +44,6 @@
 }
 
 .ChatHome-Content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     height: calc(100vh - 60px);
     padding-top: 60px;
     background-color: #FFF3EB;

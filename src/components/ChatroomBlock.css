@@ -1,0 +1,10 @@
+.chatroom-block {
+    width: calc(100% - 20px);
+    border: 1px solid #4B4F40;
+    border-radius: 10px;
+    display: flex;
+    margin: 10px 0 10px 10px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
