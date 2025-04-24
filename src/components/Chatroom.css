@@ -1,6 +1,6 @@
 .Chatroom {
   height: 100vh;
-  background-color: #666;
+  background-color: #FFF3EB;
 }
 
 .Nav-bar {
@@ -27,6 +27,7 @@
 
 .Nav-bar-Links {
   display: flex;
+  margin: 0 30px 0 0;
   gap: 20px;
 }
 
@@ -48,4 +49,22 @@
 .Nav-bar-Links a:hover {
   color: #AF6B46;
   transform: scale(1.1);
+}
+
+.Message-Area {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 150px);
+  overflow-y: auto;
+  padding-top: 60px;
+  gap: 10px;
+}
+
+.Input-Area {
+  width: 100%;
+  margin: 5px;
+  position: absolute;
+  display: flex;
+  align-content: center;
+  gap: 10px;
 }

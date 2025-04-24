@@ -1,10 +1,38 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import { firestore } from '../config';
+import {
+  TextField,
+  IconButton,
+  styled,
+} from '@mui/material'
+import {Send} from '@mui/icons-material';
 import { UseUser } from '../helper/UserContext';
 import { findRoomById } from '../helper/AccessRoom';
-import { ChatroomData } from '../helper/Interface'
+import { sendMessage, getAllMessages, newMessageAdded } from '../helper/AccessMessage';
+import { ChatroomData, MessageData } from '../helper/Interface'
+import { MessageBox } from './MessageBox';
 import './Chatroom.css';
+
+const CustomTextField = styled(TextField)({
+  width: '90%',
+  height: 'auto',
+  color: '#ccc',
+  '&:focus': {
+    color: '#404337'
+  }
+})
+
+const CustomIconButton = styled(IconButton)({
+  width: '60px',
+  height: '50px',
+  backgroundColor: '#AF6B46',
+  color: '#FFF3EB',
+  borderRadius: '10px',
+  '&:hover': {
+    backgroundColor: '#B97550',
+  }
+})
 
 const Chatroom = () => {
   const navigate = useNavigate();
@@ -13,6 +41,9 @@ const Chatroom = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const [roomData, setRoomData] = useState<ChatroomData>({} as ChatroomData);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [message, setMessage] = useState<string>('');
+  const [messages, setMessages] = useState<MessageData[]>([]);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -43,6 +74,16 @@ const Chatroom = () => {
         });
     }
   }, [roomId, authUser]);
+  
+  // Update Messages
+  useEffect(() => {
+    if(roomId && !isLoading){
+      const unsubscribe = newMessageAdded(roomId, (newMessages: MessageData[]) => {
+        setMessages(newMessages);
+      });
+      return () => unsubscribe();
+    }
+  }, [roomId, isLoading]);
 
   if (isLoading && !roomData) {
     return <div>Loading room data...</div>;
@@ -66,6 +107,43 @@ const Chatroom = () => {
           )}
           <a onClick={() => navigate('/chatHome')}>Back to Home</a>
         </div>
+      </div>
+
+      <div className='Message-Area'>
+        {messages.length > 0 ? (
+          messages.map((msg) => (
+            <MessageBox
+              key={msg.id}
+              message={msg}
+            />
+          ))
+        ) : (
+          <p>No messages yet.</p>
+        )}
+      </div>
+
+      <div className='Input-Area'>
+        <CustomTextField
+          id="text-field"
+          label="Type a message"
+          multiline
+          maxRows={2}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <CustomIconButton
+          onClick={() => {
+            if (roomId && authUser?.uid && profile?.email && message.trim()) {
+              sendMessage(roomId, authUser.uid, profile.email, message)
+                .then(()=> {setMessage('')})
+                .catch((error) => {console.error('Error sending message:', error)});
+            } else {
+              console.error("Missing required parameters for sending a message.");
+            }
+          }}
+        >
+          <Send />
+        </CustomIconButton>
       </div>
     </div>
   );

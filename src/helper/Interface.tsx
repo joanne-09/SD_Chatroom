@@ -1,18 +1,20 @@
-import { FieldValue } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export interface ChatroomData {
     roomId: string;
     name: string;
-    createdAt: FieldValue;
+    createdAt: any;
     admin: string[];
     participants: string[];
+    messages?: MessageData[];
 }
 
-export interface Message {
+export interface MessageData {
+    id?: string;
     senderId: string;
     senderEmail: string;
     content: string;
-    timestamp: FieldValue;
+    timestamp: any;
 }
 
 export interface UserData {
