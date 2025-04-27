@@ -9,12 +9,20 @@
 
 .sent {
     align-self: flex-end;
-    background-color: #A5A58D;
+}
+
+.sent.message {
+    background-color: var(--color-green);
+    border-radius: 10px;
 }
 
 .received {
     align-self: flex-start;
-    background-color: #f1f1f1;
+}
+
+.received.message {
+    background-color: var(--color-light);
+    border-radius: 10px;
 }
 
 .sender, .timestamp {

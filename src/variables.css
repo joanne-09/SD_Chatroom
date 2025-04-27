@@ -1,0 +1,52 @@
+:root {
+    /* Background colors */
+    --color-bg-orange: #DDBEA9;
+    --color-bg-orange-light: #FFE8D6;
+    --color-bg-green: #B7B7A4;
+    --color-bg-green-dark: #A5A58D;
+
+    /* Background colors Dark */
+    --color-bg-o-dark: #D0A68A;
+    --color-bg-ol-dark: #FFD1AD;
+    --color-bg-g-dark: #A5A58D;
+    --color-bg-gd-dark: #939376;
+    --color-bg-gdd-dark: #4B4F40;
+
+    /* Background colors Light */
+    --color-bg-o-light: #E2C8B6;
+    --color-bg-ol-light: #FFF3EB;
+
+    /* Nav bar colors */
+    --color-navbar: #F0EFEB;
+    --color-navbar-logo: #4B4F40;
+
+    /* Text colors */
+    --color-text-orange: #AF6B46;
+    --color-text-orange-light: #B97550;
+    --color-text-orange-dark: #8A5538;
+    --color-text-green: #4B4F40;
+    
+    /* Border colors */
+    --color-border-green: #404337;
+
+    /* Button colors */
+    --color-button-text: #F0EFEB;
+    --color-button-green: #606553;
+    --color-button-green-dark: #4B4F40;
+    --color-button-orange: #AF6B46;
+    --color-button-orange-dark: #B97550;
+    --color-button-gl: #B7B7A4;
+    --color-button-gl-dark: #A5A58D;
+
+    /* Secondary colors */
+    --color-green: #4B4F40;
+    --color-green-light: #6B705C;
+    --color-green-dark: #333730;
+
+    /* Base Palette */
+    --color-green: #A5A58D;
+    --color-light: #F1F1F1;
+    
+    /* UI elements */
+    --box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}

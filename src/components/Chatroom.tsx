@@ -19,18 +19,18 @@ const CustomTextField = styled(TextField)({
   height: 'auto',
   color: '#ccc',
   '&:focus': {
-    color: '#404337'
+    color: 'var(--color-border-green)',
   }
 })
 
 const CustomIconButton = styled(IconButton)({
   width: '60px',
   height: '50px',
-  backgroundColor: '#AF6B46',
+  backgroundColor: 'var(--color-button-orange)',
   color: '#FFF3EB',
   borderRadius: '10px',
   '&:hover': {
-    backgroundColor: '#B97550',
+    backgroundColor: 'var(--color-button-orange-dark)',
   }
 })
 

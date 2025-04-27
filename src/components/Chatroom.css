@@ -1,6 +1,6 @@
 .Chatroom {
   height: 100vh;
-  background-color: #FFF3EB;
+  background-color: var(--color-bg-ol-light);
 }
 
 .Nav-bar {
@@ -8,7 +8,7 @@
   top: 0;
   width: 100%;
   height: 60px;
-  background-color: #F0EFEB;
+  background-color: var(--color-navbar);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -20,7 +20,7 @@
 .Nav-bar-Logo {
   font-size: 1.5em;
   font-weight: bold;
-  color: #4B4F40;
+  color: var(--color-navbar-logo);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -34,20 +34,20 @@
 .Nav-bar-Links p {
   text-decoration: none;
   font-size: 1em;
-  color: #4B4F40;
+  color: var(--color-navbar-logo);
   font-weight: 500;
 }
 
 .Nav-bar-Links a {
   text-decoration: none;
   font-size: 1em;
-  color: #4B4F40;
+  color: var(--color-navbar-logo);
   font-weight: 500;
   transition: color 0.3s ease, transform 0.2s ease;
 }
 
 .Nav-bar-Links a:hover {
-  color: #AF6B46;
+  color: var(--color-text-orange);
   transform: scale(1.1);
 }
 

@@ -4,7 +4,12 @@
     margin: auto;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     overflow: auto;
-    background: linear-gradient(315deg, #DDBEA9 3%, #FFE8D6 38%, #B7B7A4 68%, #A5A58D 98%) fixed;
+    background: linear-gradient(315deg, 
+        var(--color-bg-orange) 3%, 
+        var(--color-bg-orange-light) 38%, 
+        var(--color-bg-green) 68%, 
+        var(--color-bg-green-dark) 98%
+    ) fixed;
     animation: gradient 5s ease infinite;
     background-size: 400% 400%;
 }
@@ -74,7 +79,7 @@
     top: 0;
     width: 100%;
     height: 60px;
-    background-color: #F0EFEB;
+    background-color: var(--color-navbar);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -86,7 +91,7 @@
 .Nav-bar-Logo {
     font-size: 1.5em;
     font-weight: bold;
-    color: #4B4F40;
+    color: var(--color-navbar-logo);
     text-transform: uppercase;
     letter-spacing: 2px;
 }
@@ -101,13 +106,13 @@
 .Nav-bar-Links a {
     text-decoration: none;
     font-size: 1em;
-    color: #4B4F40;
+    color: var(--color-navbar-logo);
     font-weight: 500;
     transition: color 0.3s ease, transform 0.2s ease;
 }
 
 .Nav-bar-Links a:hover {
-    color: #AF6B46;
+    color: var(--color-text-orange);
     transform: scale(1.1);
 }
 
@@ -121,7 +126,13 @@
     font-size: 4em;
     font-weight: 900;
     margin-top: 15%;
-    background: linear-gradient(90deg, #D0A68A 0%, #FFD1AD 25%, #A5A58D 50%, #939376 75%, #4B4F40 100%);
+    background: linear-gradient(90deg, 
+        var(--color-bg-o-dark) 0%, 
+        var(--color-bg-ol-dark) 25%, 
+        var(--color-bg-g-dark) 50%, 
+        var(--color-bg-gd-dark) 75%, 
+        var(--color-bg-gdd-dark) 100%
+    );
     background-size: 400% 400%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

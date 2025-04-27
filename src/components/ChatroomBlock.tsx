@@ -8,12 +8,12 @@ import './ChatroomBlock.css';
 
 const ChatroomBlockButton = styled(Button)({
     height: '50px',
-    backgroundColor: '#B7B7A4',
+    backgroundColor: 'var(--color-button-gl)',
     color: '#000000',
     borderRadius: '10px',
     boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)',
     '&:hover': {
-        backgroundColor: '#A5A58D',
+        backgroundColor: 'var(--color-button-gl-dark)',
         boxShadow: '6px 6px 6px rgba(0, 0, 0, 0.5)',
         transform: 'translateY(-3px) translateX(-5px)',
         transition: '0.1s',

@@ -24,15 +24,15 @@ import { UseUser } from './UserContext';
 import { addFriendToUser } from './AccessUser';
 import {createNewRoom, joinExistRoom} from "./AccessRoom";
 
-export const AccountButton = styled(Button)({
+const AccountButton = styled(Button)({
   fontSize: '1em',
   fontWeight: '600',
   textTransform: 'none',
-  color: '#4B4F40',
+  color: 'var(--color-text-green)',
   backgroundColor: 'transparent',
   transition: 'color 0.3s ease, transform 0.2s ease',
   '&:hover': {
-    color: '#AF6B46',
+    color: 'var(--color-text-orange)',
     backgroundColor: 'transparent',
     transform: 'scale(1.1)',
   }
@@ -141,12 +141,12 @@ const CustomSpeedDial = styled(SpeedDial)({
   right: 16,
 
   '& .MuiFab-primary': {
-    backgroundColor: '#AF6B46',
-    border: '2px solid #AF6B46',
+    backgroundColor: 'var(--color-button-orange)',
+    border: '2px solid var(--color-button-orange)',
     boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)',
 
     '&:hover': {
-      backgroundColor: '#B97550',
+      backgroundColor: 'var(--color-button-orange-dark)',
       boxShadow: '6px 6px 6px rgba(0, 0, 0, 0.5)',
     },
   },

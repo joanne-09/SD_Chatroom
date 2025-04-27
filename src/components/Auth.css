@@ -10,7 +10,10 @@
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    background: linear-gradient(135deg, #E2C8B6, #FFF3EB);
+    background: linear-gradient(135deg, 
+        var(--color-bg-o-light), 
+        var(--color-bg-ol-light)
+    );
     font-family: 'Arial', sans-serif;
     padding:40px;
     box-sizing: border-box;
@@ -21,7 +24,7 @@
     font-size: 2.5em;
     font-weight: 900;
     margin-top: 5%;
-    color: #AF6B46;
+    color: var(--color-text-orange);
     /*text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);*/
 }
 
@@ -51,7 +54,7 @@
 .SignUp input[type='email']:focus,
 .SignUp input[type='password']:focus,
 .SignUp input[type='text']:focus {
-    border-color: #404337;
+    border-color: var(--color-border-green);
     outline: none;
 }
 
@@ -62,8 +65,8 @@
     margin-top: 10px;
     border: none;
     border-radius: 6px;
-    background-color: #606553;
-    color: #F0EFEB;
+    background-color: var(--color-button-green);
+    color: var(--color-button-text);
     font-size: 1em;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -73,13 +76,13 @@
 
 .SignIn button:hover,
 .SignUp button:hover {
-    background-color: #4B4F40;
+    background-color: var(--color-button-green-dark);
     transform: translateY(-2px);
 }
 
 .SignIn button:active,
 .SignUp button:active {
-    background-color: #4B4F40;
+    background-color: var(--color-button-green-dark);
     transform: translateY(0);
 }
 
@@ -87,7 +90,7 @@
 .SignUp a {
     flex-basis: 100%;
     margin-top: 20px;
-    color: #007BFF;
+    color: var(--color-button-green);
     text-decoration: none;
     font-size: 0.9em;
     transition: color 0.3s ease;
@@ -95,7 +98,7 @@
 }
 
 .SignIn a:hover {
-    color: #0056b3;
+    color: var(--color-button-green-dark);
 }
 
 .totalForm {
