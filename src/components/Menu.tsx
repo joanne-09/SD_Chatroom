@@ -4,7 +4,7 @@ import {
   Button,
   styled
 } from '@mui/material';
-import './Menu.css';
+import '../styles/Menu.css';
 
 const MenuButton = styled(Button)({
   width: 'auto',

@@ -12,7 +12,7 @@ import { findRoomById } from '../helper/AccessRoom';
 import { sendMessage, getAllMessages, newMessageAdded } from '../helper/AccessMessage';
 import { ChatroomData, MessageData } from '../helper/Interface'
 import { MessageBox } from './MessageBox';
-import './Chatroom.css';
+import '../styles/Chatroom.css';
 
 const CustomTextField = styled(TextField)({
   width: '90%',

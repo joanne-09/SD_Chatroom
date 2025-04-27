@@ -2,7 +2,7 @@ import React from 'react';
 import { FieldValue, Timestamp } from 'firebase/firestore';
 import { UseUser } from '../helper/UserContext';
 import { MessageData } from '../helper/Interface';
-import './MessageBox.css';
+import '../styles/MessageBox.css';
 
 export const MessageBox = (
     {message}: {message: MessageData}

@@ -6,7 +6,7 @@ import { UseUser } from '../helper/UserContext';
 import { getUserRooms, newRoomsAdded, addFriendToUser } from '../helper/AccessUser';
 import { UserRoom } from '../helper/Interface';
 import { AccountMenu, StartChatButton } from '../helper/MuiComponents';
-import './ChatHome.css';
+import '../styles/ChatHome.css';
 
 const ChatHome = () => {
   const navigate = useNavigate();

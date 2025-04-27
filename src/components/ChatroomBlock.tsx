@@ -4,7 +4,7 @@ import {
     styled,
 } from '@mui/material'
 import { UserRoom } from '../helper/Interface';
-import './ChatroomBlock.css';
+import '../styles/ChatroomBlock.css';
 
 const ChatroomBlockButton = styled(Button)({
     height: '50px',

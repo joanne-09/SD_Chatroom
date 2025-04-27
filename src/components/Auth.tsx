@@ -8,7 +8,7 @@ import {
 } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
 import { createUserData, getUserByEmail } from '../helper/AccessUser'
-import './Auth.css';
+import '../styles/Auth.css';
 
 // Sign in page and can link to Sign up
 const MainSignIn = () => {
