@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Alert,
   Button,
   Menu,
   MenuItem,
@@ -10,21 +9,20 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Stack,
+  Box,
+  SpeedDial,
+  SpeedDialIcon,
+  SpeedDialAction,
   styled,
 } from '@mui/material';
+import {
+  Start,
+  AddComment,
+} from '@mui/icons-material';
 import { UseUser } from './UserContext';
 import { addFriendToUser } from './AccessUser';
-import { set } from 'firebase/database';
-
-export const CreateAlert = (
-  { message, type }: { message: string, type: 'success' | 'error' }
-) => {
-  return (
-    <Alert severity={type}>
-      {message}
-    </Alert>
-  );
-}
+import {createNewRoom, joinExistRoom} from "./AccessRoom";
 
 export const AccountButton = styled(Button)({
   fontSize: '1em',
@@ -43,11 +41,7 @@ export const AccountButton = styled(Button)({
 export const AccountMenu = (
   { handleLogOut }: { handleLogOut: () => void }
 ) => {
-  const navigate = useNavigate();
   const { authUser, profile } = UseUser();
-  const [ showAlert, setShowAlert ] = useState(false);
-  const [ alertMessage, setAlertMessage ] = useState('');
-  const [ alertType, setAlertType ] = useState<'success' | 'error'>('success');
 
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const open = Boolean(anchor);
@@ -71,31 +65,18 @@ export const AccountMenu = (
     setDialogOpen(false);
   };
 
-  // Create custom Alert
-  const displayAlert = (message: string, type: 'success' | 'error') => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setShowAlert(true);
-
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 2000);
-  }
-
   const addFriend = () => {
     addFriendToUser(authUser!.uid, email)
       .then(() => {
-        displayAlert('Friend added successfully!', 'success');
+        alert('Friend added successfully!');
       }).catch((error) => {
-        displayAlert('Error adding friend!', 'error');
+        alert('Error adding friend!');
       });
     setEmail('');
   }
 
   return (
     <div>
-      {showAlert && <CreateAlert message={alertMessage} type={alertType} />}
-
       <AccountButton
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
@@ -151,5 +132,159 @@ export const AccountMenu = (
       </Dialog>
     </div>
   )
+}
 
+// Start Chat Button Used in ChatHome.tsx
+const CustomSpeedDial = styled(SpeedDial)({
+  position: 'absolute',
+  bottom: 16,
+  right: 16,
+
+  '& .MuiFab-primary': {
+    backgroundColor: '#AF6B46',
+    border: '2px solid #AF6B46',
+    boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)',
+
+    '&:hover': {
+      backgroundColor: '#B97550',
+      boxShadow: '6px 6px 6px rgba(0, 0, 0, 0.5)',
+    },
+  },
+})
+
+const actions = [
+  { icon: <Start />, name: 'Start New Chat' },
+  { icon: <AddComment />, name: 'Join Exist Chat' },
+]
+
+export const StartChatButton = () => {
+  const { authUser, profile, loading } = UseUser();
+  const navigate = useNavigate();
+
+  const [ openOption, setOpenOption ] = useState(false);
+  const [ dialogType, setDialogType ] = useState('start');
+
+  const handleClickOpen = () => {
+    setOpenOption(true);
+  };
+
+  const handleClose = () => {
+    setOpenOption(false);
+  };
+
+  const handleStartChat = (chatName: string) => {
+    if (chatName && authUser) {
+      createNewRoom(chatName, authUser.uid).then((roomId) => {
+        navigate(`/chatroom/${roomId}`);
+      }).catch((error) => {
+        alert("Error creating new chat room: " + error.message);
+      });
+    }
+    setOpenOption(false);
+  }
+
+  const handleJoinChat = async (chatId: string) => {
+    try{
+      if (chatId && authUser) {
+        joinExistRoom(chatId, authUser.uid).then(() => {
+          console.log('Joining the room:', chatId);
+          navigate(`/chatroom/${chatId}`);
+        }).catch((error) => {
+          alert('No room found with this ID!');
+        });
+      } else {
+        alert("Invalid room ID or user not authenticated.");
+      }
+    }catch(error){
+      alert("Error joining chat room: " + error);
+    }
+    setOpenOption(false);
+  }
+
+  return (
+    <Box sx={{ 
+      transform: 'translateZ(0px)', flexGrow: 1,
+      position: 'absolute', bottom: '30px', right: '30px',
+    }}>
+      <CustomSpeedDial
+        ariaLabel="SpeedDial basic example"
+        icon={<SpeedDialIcon sx={{ color: '#FFF3EB' }} />}
+      >
+        {actions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+            onClick={() => {
+              if (action.name === 'Start New Chat') {
+                setDialogType('start');
+                console.log('Start New Chat clicked');
+              } else if (action.name === 'Join Exist Chat') {
+                setDialogType('join');
+                console.log('Join Exist Chat clicked');
+              }
+              handleClickOpen();
+            }}
+          />
+        ))}
+      </CustomSpeedDial>
+
+      <ChatDialog
+        openOption={openOption}
+        dialogType={dialogType}
+        handleClose={handleClose}
+        handleStartChat={handleStartChat}
+        handleJoinChat={handleJoinChat}
+      />
+    </Box>
+  );
+}
+
+const ChatDialog = (
+  { openOption, dialogType, handleClose, handleStartChat, handleJoinChat }: 
+  { openOption: boolean; dialogType: string; 
+    handleClose: () => void; 
+    handleStartChat: (chatName: string) => void; 
+    handleJoinChat: (chatId: string) => void; }
+) => {
+  const [ chatContent, setChatContent ] = useState('');
+
+  return (
+    <Dialog
+      open={openOption}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="xs"
+    >      
+      {
+        dialogType === 'start' ? (
+          <DialogTitle>Enter New Chat Name</DialogTitle>
+        ) : (
+          <DialogTitle>Enter Existing Chat ID</DialogTitle>
+        )
+      }
+      <DialogContent sx={{ pt: 1 }}>
+        <TextField 
+          autoFocus
+          id='chatContent'
+          type='text'
+          value={chatContent}
+          onChange={(e) => setChatContent(e.target.value)}
+          fullWidth
+        />
+      </DialogContent>
+      
+      <DialogActions>
+        <Button onClick={() => {
+            handleClose();
+            if (dialogType === 'start') {
+              handleStartChat(chatContent);
+            } else {
+              handleJoinChat(chatContent);
+            }
+        }}>Go</Button>
+        <Button onClick={handleClose}>Cancel</Button>
+      </DialogActions>
+    </Dialog>
+  )
 }

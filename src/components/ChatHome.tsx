@@ -1,50 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Button,
-  styled,
-  Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
 import { Add, Create } from '@mui/icons-material';
 import { auth } from '../config';
 import { ChatroomBlock } from './ChatroomBlock';
 import { UseUser } from '../helper/UserContext';
-import {createNewRoom, joinExistRoom} from "../helper/AccessRoom";
 import { getUserRooms, newRoomsAdded, addFriendToUser } from '../helper/AccessUser';
 import { UserRoom } from '../helper/Interface';
-import { AccountMenu } from '../helper/MuiComponents';
+import { AccountMenu, StartChatButton } from '../helper/MuiComponents';
 import './ChatHome.css';
-
-// Button for Start a new Chat
-const NewButton = styled(Button)({
-  width: '20px',
-  height: '50px',
-  backgroundColor: '#AF6B46',
-  color: '#FFF3EB',
-  borderRadius: '10px',
-  border: '2px solid #AF6B46',
-  boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)',
-  position: 'absolute',
-  top: '85%',
-  left: '90%',
-  '&:hover': {
-    backgroundColor: '#B97550',
-    boxShadow: '6px 6px 6px rgba(0, 0, 0, 0.5)',
-    transform: 'translateY(-3px) translateX(-5px)',
-    transition: '0.1s',
-  },
-});
 
 const ChatHome = () => {
   const navigate = useNavigate();
   const { authUser, profile, loading } = UseUser();
 
   const [ isLoading, setIsLoading ] = useState(true);
-  const [ openOption, setOpenOption ] = useState(false);
   const [ rooms, setRooms ] = useState<UserRoom[]>([]);
 
   // Check if user is authenticated
@@ -86,47 +55,6 @@ const ChatHome = () => {
     return <p>Loading...</p>;
   }
 
-  // Option List when Click on New Button
-  const handleClickOpen = () => {
-    setOpenOption(true);
-  };
-
-  const handleClose = () => {
-    setOpenOption(false);
-  };
-
-  const handleStartChat = () => {
-    // Logic to start a new chat
-    alert("Starting a new chat...");
-    const roomName = prompt("Enter the name of the new chat room:");
-    if (roomName && authUser) {
-      createNewRoom(roomName, authUser.uid).then((roomId) => {
-        navigate(`/chatroom/${roomId}`);
-      }).catch((error) => {
-        alert("Error creating new chat room: " + error.message);
-      });
-    }
-    setOpenOption(false);
-  };
-
-  const handleJoinChat = async () => {
-    // Logic to join an existing chat
-    alert("Joining an existing chat...");
-    try{
-      const roomId = prompt("Enter the ID of the chat room to join:");
-      if (roomId && authUser) {
-        await joinExistRoom(roomId, authUser.uid);
-        console.log('Joining the room:', roomId);
-        navigate(`/chatroom/${roomId}`);
-      } else {
-        alert("Invalid room ID or user not authenticated.");
-      }
-    }catch(error){
-      alert("Error joining chat room: " + error);
-    }
-    setOpenOption(false);
-  };
-
   return(
     <div className='ChatHome'>
       <div className="Nav-bar">
@@ -160,47 +88,7 @@ const ChatHome = () => {
           }
         </div>
 
-        <NewButton 
-          variant='outlined'
-          size="large"
-          onClick={handleClickOpen}
-        >
-          <Add fontSize="large"/>
-        </NewButton>
-
-        <Dialog
-          open={openOption}
-          onClose={handleClose}
-          fullWidth
-          maxWidth="xs"
-        >
-          <DialogTitle>Start a New Chat</DialogTitle>
-          
-          <DialogContent sx={{ pt: 1 }}>
-            <Stack spacing={2} sx={{ mt: 1 }}>
-              <Button 
-                variant="contained" 
-                color="primary"
-                onClick={handleStartChat}
-                fullWidth
-              >
-                Create New Chat Room
-              </Button>
-              
-              <Button 
-                variant="outlined" 
-                onClick={handleJoinChat}
-                fullWidth
-              >
-                Join Existing Chat Room
-              </Button>
-            </Stack>
-          </DialogContent>
-          
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-          </DialogActions>
-        </Dialog>
+        <StartChatButton />
       </div>
     </div>
   )
