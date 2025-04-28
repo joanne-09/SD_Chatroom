@@ -8,16 +8,14 @@ import {
 } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
 import { createUserData, getUserByEmail } from '../helper/AccessUser'
+import { SignInPage, SignUpPage } from '../helper/MuiComponents';
 import '../styles/Auth.css';
 
 // Sign in page and can link to Sign up
 const MainSignIn = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSignIn = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSignIn = async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       alert('User signed in successfully!');
@@ -55,57 +53,19 @@ const MainSignIn = () => {
 
   return(
     <div className='SignIn'>
-      <h2>Sign In</h2>
-      <div className='totalForm'>
-        <div className='form'>
-          <label htmlFor='email'>Email</label>
-          <input
-            type='email'
-            id='email'
-            name='email'
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-        </div>
-
-        <div className='form'>
-          <label htmlFor='password'>Password</label>
-          <input
-            type='password'
-            id='password'
-            name='password'
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-        </div>
-        
-        <button onClick={handleSignIn}>
-          Sign In
-        </button>
-        <button onClick={handleSignInGoogle}>
-          Sign In with Google
-        </button>
-
-        <a href='/signUp'>Sign Up</a>
-        <a href='/'>Back to Home</a>
-      </div>
+      <SignInPage 
+        handleSignIn={handleSignIn}
+        handleSignInGoogle={handleSignInGoogle}
+      />
     </div>
   );
 }
 
 // Sign up
 const SignUp = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSignUp = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSignUp = async (name: string, email: string, password: string) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       createUserData(auth.currentUser?.uid!, name, email);
@@ -118,47 +78,9 @@ const SignUp = () => {
 
   return (
     <div className='SignUp'>
-      <h2>Sign Up</h2>
-      <div>
-        <div>
-          <label>Name</label>
-          <input
-            type='text'
-            id='name'
-            name='name'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label htmlFor='email'>Email</label>
-          <input
-            type='email'
-            id='email'
-            name='email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label htmlFor='password'>Password</label>
-          <input
-            type='password'
-            id='password'
-            name='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        <button onClick={handleSignUp}>
-          Register
-        </button>
-        
-        <a href='/'>Back to Home</a>
-      </div>
+      <SignUpPage 
+        handleSignUp={handleSignUp}
+      />
     </div>
   );
 };

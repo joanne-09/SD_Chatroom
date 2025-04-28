@@ -1,13 +1,7 @@
 .SignIn, .SignUp {
-    display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
-    -ms-flex-align: center;
-    -ms-flex-pack: center;
-    -webkit-box-align: center;
     align-items: center;
-    -webkit-box-pack: center;
-    flex-direction: column;
+    justify-content: center;
     height: 100vh;
     width: 100%;
     background: linear-gradient(135deg, 
@@ -15,98 +9,7 @@
         var(--color-bg-ol-light)
     );
     font-family: 'Arial', sans-serif;
-    padding:40px;
+    padding: 40px;
     box-sizing: border-box;
     text-align: center;
-}
-
-.SignIn h2, .SignUp h2 {
-    font-size: 2.5em;
-    font-weight: 900;
-    margin-top: 5%;
-    color: var(--color-text-orange);
-    /*text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);*/
-}
-
-.SignIn label, .SignUp label {
-    margin: auto;
-
-}
-
-.SignIn input[type='email'],
-.SignIn input[type='password'],
-.SignUp input[type='email'],
-.SignUp input[type='password'],
-.SignUp input[type='text'] {
-    width: auto;
-    padding: 12px;
-    left: 50px;
-    margin: 20px 0 0 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
-    transition: border-color 0.3s ease;
-}
-
-.SignIn input[type='email']:focus,
-.SignIn input[type='password']:focus,
-.SignUp input[type='email']:focus,
-.SignUp input[type='password']:focus,
-.SignUp input[type='text']:focus {
-    border-color: var(--color-border-green);
-    outline: none;
-}
-
-.SignIn button,
-.SignUp button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 6px;
-    background-color: var(--color-button-green);
-    color: var(--color-button-text);
-    font-size: 1em;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    flex-basis: 100%;
-}
-
-.SignIn button:hover,
-.SignUp button:hover {
-    background-color: var(--color-button-green-dark);
-    transform: translateY(-2px);
-}
-
-.SignIn button:active,
-.SignUp button:active {
-    background-color: var(--color-button-green-dark);
-    transform: translateY(0);
-}
-
-.SignIn a,
-.SignUp a {
-    flex-basis: 100%;
-    margin-top: 20px;
-    color: var(--color-button-green);
-    text-decoration: none;
-    font-size: 0.9em;
-    transition: color 0.3s ease;
-    text-align: end;
-}
-
-.SignIn a:hover {
-    color: var(--color-button-green-dark);
-}
-
-.totalForm {
-    width: 30%;
-    max-width: 500%;
-}
-
-.form {
-    width: 100%;
-    max-width: 100%;
 }
