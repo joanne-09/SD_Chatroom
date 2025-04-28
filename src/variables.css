@@ -49,4 +49,5 @@
     
     /* UI elements */
     --box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+    --bg-gradient: linear-gradient(135deg, #E2C8B6, #FFF3EB);
 }

@@ -8,10 +8,13 @@
 }
 
 .sent {
-    align-self: flex-end;
+    width: auto;
+    align-self: end;
 }
 
-.sent.message {
+.sent .message {
+    width: fit-content;
+    padding: 5px;
     background-color: var(--color-green);
     border-radius: 10px;
 }
@@ -20,7 +23,9 @@
     align-self: flex-start;
 }
 
-.received.message {
+.received .message {
+    width: fit-content;
+    padding: 5px;
     background-color: var(--color-light);
     border-radius: 10px;
 }

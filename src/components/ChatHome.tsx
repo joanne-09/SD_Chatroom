@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../config';
 import { ChatroomBlock } from './ChatroomBlock';
+import { Loading } from './Loading';
 import { UseUser } from '../helper/UserContext';
 import { getUserRooms, newRoomsAdded, addFriendToUser } from '../helper/AccessUser';
 import { UserRoom } from '../helper/Interface';
@@ -37,6 +38,16 @@ const ChatHome = () => {
     });
   }
 
+  // Add Friend To User
+  const addFriend = (email: string) => {
+    addFriendToUser(authUser!.uid, email)
+      .then(() => {
+        alert('Friend added successfully!');
+      }).catch((error) => {
+        alert('Error adding friend!');
+      });
+  }
+
   // Get All Rooms for User
   useEffect(() => {
     const fetchRooms = async () => {
@@ -51,7 +62,7 @@ const ChatHome = () => {
   }, [authUser, loading]);
 
   if(loading) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   return(
@@ -67,6 +78,7 @@ const ChatHome = () => {
         <div className="Nav-bar-Links">
           <AccountMenu 
             handleLogOut={handleLogOut}
+            addFriend={addFriend}
           />
         </div>
       </div>

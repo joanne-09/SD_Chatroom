@@ -5,6 +5,7 @@ import Menu from './components/Menu'
 import {MainSignIn, SignUp} from "./components/Auth";
 import ChatHome from "./components/ChatHome";
 import Chatroom from './components/Chatroom';
+import UserProfile from './components/UserProfile';
 import { UserChange } from './helper/UserContext';
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
             <Route element={<MainSignIn />} path={'/signIn'}></Route>
             <Route element={<SignUp />} path={'/signUp'}></Route>
             <Route element={<ChatHome />} path={'/chatHome'}></Route>
+            <Route element={<UserProfile />} path={'/profile'}></Route>
             <Route element={<Chatroom />} path={'/chatroom/:roomId'}></Route>
           </Routes>
         </Router>

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
-  Paper,
   Menu,
   MenuItem,
   TextField,
@@ -14,7 +13,6 @@ import {
   SpeedDial,
   SpeedDialIcon,
   SpeedDialAction,
-  Link,
   styled,
 } from '@mui/material';
 import {
@@ -40,9 +38,13 @@ const AccountButton = styled(Button)({
 });
 
 export const AccountMenu = (
-  { handleLogOut }: { handleLogOut: () => void }
+  { handleLogOut, addFriend }: 
+  { handleLogOut: () => void; 
+    addFriend: (email: string) => void; 
+  }
 ) => {
   const { authUser, profile } = UseUser();
+  const navigate = useNavigate();
 
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const open = Boolean(anchor);
@@ -66,16 +68,6 @@ export const AccountMenu = (
     setDialogOpen(false);
   };
 
-  const addFriend = () => {
-    addFriendToUser(authUser!.uid, email)
-      .then(() => {
-        alert('Friend added successfully!');
-      }).catch((error) => {
-        alert('Error adding friend!');
-      });
-    setEmail('');
-  }
-
   return (
     <div>
       <AccountButton
@@ -96,7 +88,7 @@ export const AccountMenu = (
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={() => {navigate('/profile')}}>Profile</MenuItem>
         <MenuItem onClick={handleDialogOpen}>Add Friend</MenuItem>
         <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
       </Menu>
@@ -127,7 +119,8 @@ export const AccountMenu = (
           <Button onClick={() => {
             // Add friend logic here
             handleDialogClose();
-            addFriend();
+            addFriend(email);
+            setEmail('');
           }}>Add</Button>
         </DialogActions>
       </Dialog>
@@ -287,185 +280,5 @@ const ChatDialog = (
         <Button onClick={handleClose}>Cancel</Button>
       </DialogActions>
     </Dialog>
-  )
-}
-
-// Auth Page
-const AuthButton = styled(Button)({
-  width: '100%',
-  marginTop: '5px',
-  marginBottom: '5px',
-  backgroundColor: 'var(--color-button-green)',
-  textTransform: 'none',
-  '&: hover': {
-    backgroundColor: 'var(--color-button-green-dark)',
-    color: 'white',
-  }
-})
-
-const AuthLink = styled(Link)({
-  display: 'block',
-  width: '100%',
-  textAlign: 'center',
-  marginTop: '8px',
-})
-
-export const SignInPage = (
-  { handleSignIn, handleSignInGoogle }:
-  { handleSignIn: (email: string, password: string) => void;
-    handleSignInGoogle: () => void; 
-  }
-) => {
-  const [ email, setEmail ] = useState('');
-  const [ password, setPassword ] = useState('');
-
-  return (
-    <Box
-      sx={{
-        width: '40%'
-      }}
-    >
-      <Paper
-        elevation={5}
-        sx={{
-          padding: '20px',
-          backgroundColor: 'var(--color-navbar)',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: '2.5em',
-            fontWeight: '900',
-            marginTop: '20px',
-            color: 'var(--color-text-orange)',
-          }}
-        >
-          Sign In
-        </h1>
-        <form>
-          <TextField 
-            label="Email" 
-            variant="outlined" 
-            fullWidth 
-            margin="normal" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField 
-            label="Password" 
-            type="password" 
-            variant="outlined" 
-            fullWidth 
-            margin="normal" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <AuthButton
-            variant="contained" 
-            color="primary" 
-            type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              handleSignIn(email, password);
-            }}
-          >
-            Sign In
-          </AuthButton>
-          <AuthButton
-            variant="contained" 
-            color="secondary" 
-            type="button" 
-            onClick={() => {
-              handleSignInGoogle();
-            }}
-          >
-            Sign In With Google
-          </AuthButton>
-        </form>
-        <AuthLink href="/signUp" underline="hover" color="var(--color-text-green)">
-          Sign Up
-        </AuthLink>
-        <AuthLink href="/" underline="hover" color="var(--color-text-green)">
-          Back to Home
-        </AuthLink>
-      </Paper>
-    </Box>
-  )
-}
-
-export const SignUpPage = (
-  { handleSignUp }:
-  { handleSignUp: (name: string, email: string, password: string) => void; }
-) => {
-  const [ name, setName ] = useState('');
-  const [ email, setEmail ] = useState('');
-  const [ password, setPassword ] = useState('');
-
-  return (
-    <Box
-      sx={{
-        width: '40%'
-      }}
-    >
-      <Paper
-        elevation={5}
-        sx={{
-          padding: '20px',
-          backgroundColor: 'var(--color-navbar)',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: '2.5em',
-            fontWeight: '900',
-            marginTop: '20px',
-            color: 'var(--color-text-orange)',
-          }}
-        >
-          Sign Up
-        </h1>
-        <form>
-          <TextField 
-            label="Name" 
-            variant="outlined" 
-            fullWidth 
-            margin="normal" 
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <TextField 
-            label="Email" 
-            variant="outlined" 
-            fullWidth 
-            margin="normal" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField 
-            label="Password" 
-            type="password" 
-            variant="outlined" 
-            fullWidth 
-            margin="normal" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <AuthButton 
-            variant="contained" 
-            color="primary" 
-            type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              handleSignUp(name, email, password);
-            }}
-          >
-            Sign Up
-          </AuthButton>
-        </form>
-        <AuthLink href="/" underline="hover" color="var(--color-text-green)">
-          Back to Home
-        </AuthLink>
-      </Paper>
-    </Box>
   )
 }

@@ -10,8 +10,9 @@ import {Send} from '@mui/icons-material';
 import { UseUser } from '../helper/UserContext';
 import { findRoomById } from '../helper/AccessRoom';
 import { sendMessage, getAllMessages, newMessageAdded } from '../helper/AccessMessage';
-import { ChatroomData, MessageData } from '../helper/Interface'
+import { ChatroomData, MessageData } from '../helper/Interface';
 import { MessageBox } from './MessageBox';
+import { Loading } from './Loading';
 import '../styles/Chatroom.css';
 
 const CustomTextField = styled(TextField)({
@@ -86,7 +87,7 @@ const Chatroom = () => {
   }, [roomId, isLoading]);
 
   if (isLoading && !roomData) {
-    return <div>Loading room data...</div>;
+    return <Loading />;
   }
 
   return (
