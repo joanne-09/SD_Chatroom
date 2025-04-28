@@ -9,6 +9,7 @@ import {
     query, 
     where,
     onSnapshot,
+    updateDoc,
 } from 'firebase/firestore';
 import { UserData, UserRoom, UserFriend } from './Interface';
 
@@ -53,6 +54,17 @@ export const getUserByEmail = async (email: string) => {
     }catch(error){
         console.error('Error fetching user by email:', error);
         return null;
+    }
+}
+
+export const updateUserData = async (userId: string, data: Partial<UserData>) => {
+    try{
+        const userRef = doc(firestore, 'users', userId);
+        await updateDoc(userRef, data);
+        console.log('User data updated:', userId);
+    }catch(error){
+        console.error('Error updating user data:', error);
+        throw error;
     }
 }
 

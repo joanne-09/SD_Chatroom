@@ -6,9 +6,12 @@ import { firestore, storage } from '../config';
 import {
 	Avatar,
 	Button,
-	CircularProgress
+	CircularProgress,
+	TextField,
 } from '@mui/material';
 import { UseUser } from '../helper/UserContext';
+import { updateUserData } from '../helper/AccessUser';
+import { UserData } from '../helper/Interface';
 import { Loading } from './Loading';
 import '../styles/UserProfile.css';
 
@@ -87,12 +90,19 @@ const UserProfile = () => {
 	const { authUser, profile, loading } = UseUser();
 	const navigate = useNavigate();
 
+	const [ name, setName ] = useState(profile?.name || '');
+	const [ email, setEmail ] = useState(profile?.email || '');
+	const [ phone, setPhone ] = useState(profile?.phone || '');
+	const [ address, setAddress ] = useState(profile?.address || '');
+
+	const [ refreshKey, setRefreshKey ] = useState(0);
+
 	if (loading) {
 		return <Loading />;
 	}
 
 	return (
-		<div className='UserProfile'>
+		<div className='UserProfile' key={refreshKey}>
 			<div className="Nav-bar">
 				<div className="Nav-bar-Logo">
 					{profile ? (
@@ -107,15 +117,66 @@ const UserProfile = () => {
 			</div>
 
 			<div className="profile-content">
-        <h2>Your Profile</h2>
-        
-        <ProfileImage />
-        
-        <div className="profile-details">
-          <h3>{profile?.name || 'User'}</h3>
-          <p>{profile?.email || ''}</p>
-        </div>
-      </div>
+
+				<ProfileImage />
+
+				<div className="profile-details">
+					<TextField 
+						variant="standard"
+						label="Name"
+						value={name}
+						onChange={(e) => {
+							setName(e.target.value);
+						}}
+					/>
+					<TextField 
+						variant="standard"
+						label="Email"
+						value={email}
+						onChange={(e) => {
+							setEmail(e.target.value);
+						}}
+					/>
+					<TextField 
+						variant="standard"
+						label="Phone Number"
+						value={phone}
+						onChange={(e) => {
+							setPhone(e.target.value);
+						}}
+					/>
+					<TextField 
+						variant="standard"
+						label="Address"
+						value={address}
+						onChange={(e) => {
+							setAddress(e.target.value);
+						}}
+					/>
+
+					<Button
+						variant="contained"
+						onClick={() => {
+							if (authUser) {
+								updateUserData(authUser.uid, {
+									name,
+									email,
+									phone,
+									address
+								} as Partial<UserData>).then(() => {
+									alert('Profile updated successfully!');
+									setRefreshKey((prev) => prev + 1);
+								}).catch((error) => {
+									console.error('Error updating profile:', error);
+									alert('Failed to update profile');
+								});
+							}}
+						}
+					>
+						Save
+					</Button>
+				</div>
+			</div>
 		</div>
 	)
 }
