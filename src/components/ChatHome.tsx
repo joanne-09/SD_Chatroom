@@ -54,14 +54,17 @@ const ChatHome = () => {
       if (authUser && !loading) {
         const unsubscribe = await newRoomsAdded(authUser.uid, (rooms: UserRoom[]) => {
           setRooms(rooms);
+          setIsLoading(false);
         });
         return () => unsubscribe();
+      }else{
+        setIsLoading(true);
       }
     };
     fetchRooms();
   }, [authUser, loading]);
 
-  if(loading) {
+  if(isLoading || loading) {
     return <Loading />;
   }
 

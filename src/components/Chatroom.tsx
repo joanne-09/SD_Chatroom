@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import { firestore } from '../config';
 import {
@@ -46,6 +46,8 @@ const Chatroom = () => {
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<MessageData[]>([]);
 
+  const messageAreaRef = useRef<HTMLDivElement>(null);
+
   // Check if user is authenticated
   useEffect(() => {
     if (!authUser && !loading) {
@@ -86,7 +88,14 @@ const Chatroom = () => {
     }
   }, [roomId, isLoading]);
 
-  if (isLoading && !roomData) {
+  // Auto Scroll to Bottom
+  useEffect(() => {
+    if (messageAreaRef.current) {
+      messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  if ((isLoading && !roomData) || loading) {
     return <Loading />;
   }
 
@@ -110,7 +119,7 @@ const Chatroom = () => {
         </div>
       </div>
 
-      <div className='Message-Area'>
+      <div className='Message-Area' ref={messageAreaRef}>
         {messages.length > 0 ? (
           messages.map((msg) => (
             <MessageBox

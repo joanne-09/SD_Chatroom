@@ -1,6 +1,9 @@
 .ChatHome {
     width: 100%;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .Nav-bar {
@@ -48,5 +51,20 @@
     height: calc(100vh - 60px);
     padding-top: 60px;
     background-color: var(--color-bg-ol-light);
-    /* background-color: white; */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-rooms {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    scrollbar-width: thin;
 }

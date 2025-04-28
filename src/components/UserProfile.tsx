@@ -115,14 +115,6 @@ const UserProfile = () => {
           <h3>{profile?.name || 'User'}</h3>
           <p>{profile?.email || ''}</p>
         </div>
-        
-        <Button 
-          onClick={() => navigate('/chatHome')}
-          variant="outlined"
-          sx={{ mt: 3 }}
-        >
-          Back to Chat
-        </Button>
       </div>
 		</div>
 	)

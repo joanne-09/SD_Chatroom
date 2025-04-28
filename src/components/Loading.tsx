@@ -11,13 +11,13 @@ export const Loading = () => {
 				justifyContent: 'center',
 				alignItems: 'center',
 				height: '100vh',
-				backgroundColor: 'var(--bg-gradient)',
+				background: 'var(--bg-gradient)',
 			}}
 		>
 			<CircularProgress
 				size={100}
 				sx={{
-					color: 'var(--color-green)',
+					color: 'var(--color-orange)',
 				}}
 			/>
 		</Box>

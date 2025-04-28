@@ -139,6 +139,7 @@
     animation: word-gradient 5s ease infinite;
     transition: margin-bottom 3s;
     z-index: 2;
+    overflow: hidden;
 }
 
 @keyframes word-gradient {
