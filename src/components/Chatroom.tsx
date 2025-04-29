@@ -15,7 +15,7 @@ import { findRoomById } from '../helper/AccessRoom';
 import { sendMessage, getAllMessages, newMessageAdded, newMessageDeleted } from '../helper/AccessMessage';
 import GifPicker from './GifPicker';
 import { ChatroomData, MessageData } from '../helper/Interface';
-import { SideBar } from '../helper/MuiChatroom';
+import { SideBar } from './SidebarChat';
 import { MessageBox } from './MessageBox';
 import { Loading } from './Loading';
 import '../styles/Chatroom.css';
@@ -23,6 +23,9 @@ import '../styles/Chatroom.css';
 const CustomTextField = styled(TextField)({
   width: '90%',
   height: 'auto',
+  backgroundColor: 'var(--color-navbar)',
+  borderRadius: '10px',
+  // overflow: 'hidden',
   color: '#ccc',
   '&:focus': {
     color: 'var(--color-border-green)',
@@ -35,8 +38,11 @@ const CustomIconButton = styled(IconButton)({
   backgroundColor: 'var(--color-button-orange)',
   color: '#FFF3EB',
   borderRadius: '10px',
+  transition: 'transform 0.2s ease, filter 0.2s ease',
   '&:hover': {
     backgroundColor: 'var(--color-button-orange-dark)',
+    transform: 'translateY(-2px)',
+    filter: 'brightness(1.05)',
   }
 })
 
@@ -145,18 +151,13 @@ const Chatroom = () => {
       <div className="Nav-bar">
         <div className="Nav-bar-Logo">
           {roomData ? (
-            <p>Welcome to {roomData.name}</p>
+            <p>{roomData.name}</p>
           ) : (
             <p>Welcome</p>
           )}
         </div>
         <div className="Nav-bar-Links">
-          {profile ? (
-            <p>{profile.name}</p>
-          ) : (
-            <p>Guest</p>
-          )}
-          <a onClick={() => navigate('/chatHome')}>Back to Home</a>
+          <a onClick={() => navigate('/chatHome')}>Home</a>
         </div>
       </div>
 
@@ -227,8 +228,6 @@ const Chatroom = () => {
           </div>
         </div>
 
-        
-        
         <GifPicker 
           open={gifPickerOpen}
           onClose={() => setGifPickerOpen(false)}

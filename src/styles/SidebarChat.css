@@ -13,6 +13,43 @@
     position: relative;
 }
 
+.sidebar-header {
+    padding: 10px;
+    background-color: var(--color-navbar);
+    color: var(--color-text-green);
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.mobile-sidebar {
+    width: 80vw;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--color-navbar);
+    color: var(--color-text-green);
+    border-right: none;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.mobile-sidebar-header {
+    display: flex;
+    justify-content: flex-start;
+    padding: 8px;
+    background-color: var(--color-navbar-dark);
+}
+
+.sidebar-toggle {
+    position: fixed !important;
+    top: 10px;
+    left: 10px;
+    z-index: 1200 !important;
+    color: var(--color-button-green-dark);
+    box-shadow: 0 2px 8px rbga(0,0,0,0.3);
+}
+
 .room-list {
     flex: 1;
     overflow-y: auto;
@@ -57,4 +94,15 @@
     padding: 20px !important;
     color: rgba(255, 255, 255, 0.5) !important;
     font-style: italic !important;
+}
+
+.sidebar-drawer .MuiPaper-root {
+    background-color: var(--color-navbar);
+    width: 280px;
+}
+
+@media (max-width: 600px) {
+    .Chatroom-Content {
+        margin-left: 0 !important;
+    }
 }

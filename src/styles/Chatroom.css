@@ -69,7 +69,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding-right: 1vw;;
   overflow: hidden;
   background-color: var(--color-bg-ol-light);
 }
@@ -80,7 +80,7 @@
   display: flex;
   flex-direction: column;
   /* align-items: center; */
-  padding: 20px 15px 10px;
+  padding: 0.5vw;
   height: calc(100vh - 150px);
   overflow-y: auto;
   gap: 10px;
@@ -107,24 +107,6 @@
   bottom: 0;
 }
 
-/* Enhance text field appearance */
-.Input-Area .MuiTextField-root {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.06);
-  overflow: hidden;
-}
-
-/* Button hover effects */
-.Input-Area button {
-  transition: transform 0.2s ease, filter 0.2s ease;
-}
-
-.Input-Area button:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
-}
-
 /* Message Animations */
 @keyframes messageAppear {
   from {
@@ -147,22 +129,23 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .Nav-bar {
     padding: 0 15px;
   }
   
   .Nav-bar-Logo {
+    margin-left: 30px;
     font-size: 1.3em;
   }
   
-  .Message-Area {
+  /* .Message-Area {
     padding: 15px 10px;
   }
   
   .Input-Area {
     padding: 10px 15px;
-  }
+  } */
   
   .message-box {
     max-width: 90%;
