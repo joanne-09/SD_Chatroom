@@ -8,20 +8,22 @@ import {
 } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
 import { createUserData, getUserByEmail } from '../helper/AccessUser'
+import { UseAlert } from '../helper/CreateAlert';
 import { SignInPage, SignUpPage } from '../helper/MuiAuth';
 import '../styles/Auth.css';
 
 // Sign in page and can link to Sign up
 const MainSignIn = () => {
   const navigate = useNavigate();
+  const { showAlert } = UseAlert();
 
   const handleSignIn = async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      alert('User signed in successfully!');
-      navigate('/chatHome');
+      showAlert('User signed in successfully!', 'success');
+      setTimeout(() => {navigate('/chatHome')}, 1500);
     } catch {
-      alert('Error signing in');
+      showAlert('Error signing in', 'error');
     }
   };
 
@@ -32,10 +34,10 @@ const MainSignIn = () => {
     signInWithPopup(auth, provider).then(async (result) => {
       await handleAddNewGoogleUser(result.user);
 
-      alert('Signed in Successfully!');
-      navigate('/chatHome');
+      showAlert('User signed in successfully!', 'success');
+      setTimeout(() => {navigate('/chatHome')}, 1500);
     }).catch((error) => {
-      alert('Error signing in with Google');
+      showAlert('Error signing in with Google', 'error');
     });
   };
 
@@ -64,15 +66,16 @@ const MainSignIn = () => {
 // Sign up
 const SignUp = () => {
   const navigate = useNavigate();
+  const { showAlert } = UseAlert();
 
   const handleSignUp = async (name: string, email: string, password: string) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       createUserData(auth.currentUser?.uid!, name, email);
-      alert('User created successfully!');
-      navigate('/chatHome');
+      showAlert('User signed up successfully!', 'success');
+      setTimeout(() => {navigate('/chatHome')}, 1500);
     } catch {
-      alert('Error creating user');
+      showAlert('Error creating user', 'error');
     }
   };
 

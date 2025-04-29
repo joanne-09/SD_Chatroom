@@ -6,12 +6,14 @@ import { Loading } from './Loading';
 import { UseUser } from '../helper/UserContext';
 import { newRoomsAdded, addFriendToUser } from '../helper/AccessUser';
 import { UserRoom } from '../helper/Interface';
+import { UseAlert } from '../helper/CreateAlert';
 import { AccountMenu, StartChatButton } from '../helper/MuiComponents';
 import '../styles/ChatHome.css';
 
 const ChatHome = () => {
   const navigate = useNavigate();
   const { authUser, profile, loading } = UseUser();
+  const {showAlert} = UseAlert();
 
   const [ isLoading, setIsLoading ] = useState(true);
   const [ rooms, setRooms ] = useState<UserRoom[]>([]);
@@ -19,22 +21,22 @@ const ChatHome = () => {
   // Check if user is authenticated
   useEffect(() => {
     if (!authUser && !loading) {
-      alert("No authenticated user found.");
-      navigate('/');
+      showAlert("No authenticated user found.", "error");
+      setTimeout(() => {navigate('/')}, 1500);
     }
   }, [authUser, loading, navigate]);
 
   // Log Out
   const handleLogOut = () => {
     if (!authUser) {
-      alert("No user is signed in.");
+      showAlert("No user is signed in.", "error");
       return;
     }
     auth.signOut().then(() => {
-      alert("User signed out successfully!");
-      navigate('/');
+      showAlert("User signed out successfully!", "success");
+      setTimeout(() => {navigate('/')}, 1500);
     }).catch((error) => {
-      alert("Error signing out: " + error.message);
+      showAlert("Error signing out" + error.message, "error");
     });
   }
 
@@ -42,9 +44,9 @@ const ChatHome = () => {
   const addFriend = (email: string) => {
     addFriendToUser(authUser!.uid, email)
       .then(() => {
-        alert('Friend added successfully!');
+        showAlert('Friend added successfully!', 'success');
       }).catch((error) => {
-        alert('Error adding friend!');
+        showAlert('Error adding friend: ' + error.message, 'error');
       });
   }
 
@@ -102,7 +104,9 @@ const ChatHome = () => {
           }
         </div>
 
-        <StartChatButton />
+        <StartChatButton 
+          alertFunc={showAlert}
+        />
       </div>
     </div>
   )

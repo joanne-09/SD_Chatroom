@@ -13,6 +13,7 @@ import {
   Gif,
 } from '@mui/icons-material';
 import { UseUser } from '../helper/UserContext';
+import { UseAlert } from '../helper/CreateAlert';
 import { findRoomById } from '../helper/AccessRoom';
 import { sendMessage, getAllMessages, newMessageAdded, newMessageDeleted } from '../helper/AccessMessage';
 import GifPicker from './GifPicker';
@@ -51,6 +52,7 @@ const CustomIconButton = styled(IconButton)({
 const Chatroom = () => {
   const navigate = useNavigate();
   const { authUser, profile, loading } = UseUser();
+  const { showAlert } = UseAlert();
 
   const { roomId } = useParams<{ roomId: string }>();
   const [roomData, setRoomData] = useState<ChatroomData>({} as ChatroomData);
@@ -73,8 +75,9 @@ const Chatroom = () => {
   // Check if user is authenticated
   useEffect(() => {
     if (!authUser && !loading) {
+      showAlert("No authenticated user found.", "error");
+      setTimeout(() => {navigate('/chatHome')}, 1500);
       alert("No authenticated user found.");
-      navigate('/chatHome');
     }
   }, [authUser, navigate, loading]);
 
@@ -82,12 +85,12 @@ const Chatroom = () => {
   useEffect(() => {
     if (roomId && authUser) {
       setIsLoading(true);
-      findRoomById(roomId)
+      findRoomById(roomId, showAlert)
         .then((data) => {
           console.log("Room data:", data);
           if(!data){
-            alert("Room not found.");
-            navigate('/chatHome');
+            showAlert("Room not found.", "error");
+            setTimeout(() => {navigate('/chatHome')}, 1500);
           }else{
             setRoomData(data);
           }
@@ -141,7 +144,7 @@ const Chatroom = () => {
         timestamp: '',
       };
 
-      sendMessage(roomId, gifMessage).catch((error) => {
+      sendMessage(roomId, gifMessage, showAlert).catch((error) => {
         console.error('Error sending GIF:', error);
       });
     }
@@ -250,7 +253,8 @@ const Chatroom = () => {
                     };
                     sendMessage(
                       roomId, 
-                      newmessage
+                      newmessage,
+                      showAlert
                     )
                       .then(()=> {setMessage('')})
                       .catch((error) => {console.error('Error sending message:', error)});

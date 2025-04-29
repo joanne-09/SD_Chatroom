@@ -21,6 +21,7 @@ import {
   Add,
 } from '@mui/icons-material'
 import { UseUser } from '../helper/UserContext';
+import { UseAlert } from '../helper/CreateAlert';
 import { newRoomsAdded, newFriendsAdded } from '../helper/AccessUser';
 import { joinExistRoom } from '../helper/AccessRoom';
 import { UserRoom, UserFriend } from '../helper/Interface';
@@ -30,6 +31,7 @@ import { join } from 'path';
 export const SideBar = () => {
   const navigate = useNavigate();
   const { authUser, profile, loading } = UseUser();
+  const { showAlert } = UseAlert();
 
   const [isLoading, setIsLoading] = useState(true);
   const [rooms, setRooms] = useState<UserRoom[]>([]);
@@ -46,8 +48,8 @@ export const SideBar = () => {
 
   // Check if user is authenticated
   if (!authUser && !loading) {
-    alert("No authenticated user found.");
-    navigate('/');
+    showAlert("No authenticated user found.", "error");
+    setTimeout(() => {navigate('/')}, 1500);
   }
 
   // Get All Rooms for User
@@ -159,7 +161,7 @@ export const SideBar = () => {
             }
             const friendId = friends.find(friend => friend.friendEmail === friendEmail)?.friendId;
             if(activeRoom && friendId) {
-              joinExistRoom(activeRoom, friendId);
+              joinExistRoom(activeRoom, friendId, showAlert);
             }
             setFriendEmail('');
           }}

@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import { UseUser } from '../helper/UserContext';
+import { UseAlert } from '../helper/CreateAlert';
 import { MessageData } from '../helper/Interface';
 import { deleteMessage } from '../helper/AccessMessage';
 import '../styles/MessageBox.css';
@@ -13,6 +14,7 @@ export const MessageBox = (
   { roomId, message }: { roomId: string; message: MessageData }
 ) => {
   const { authUser } = UseUser();
+  const { showAlert } = UseAlert();
   const [isHover, setIsHover] = useState(false);
 
   const handleTimestanp = (timestamp: Timestamp) => {
@@ -47,7 +49,7 @@ export const MessageBox = (
             size='small'
             onClick={() => {
               if(message.id && roomId) {
-                deleteMessage(roomId, message.id);
+                deleteMessage(roomId, message.id, showAlert);
               }
             }}
           >

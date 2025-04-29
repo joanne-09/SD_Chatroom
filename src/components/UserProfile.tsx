@@ -10,6 +10,7 @@ import {
 	TextField,
 } from '@mui/material';
 import { UseUser } from '../helper/UserContext';
+import { UseAlert } from '../helper/CreateAlert';
 import { updateUserData } from '../helper/AccessUser';
 import { UserData } from '../helper/Interface';
 import { Loading } from './Loading';
@@ -17,6 +18,7 @@ import '../styles/UserProfile.css';
 
 const ProfileImage = () => {
 	const { authUser } = UseUser();
+	const { showAlert } = UseAlert();
 	const [uploading, setUploading] = useState(false);
 	const [imageUrl, setImageUrl] = useState('');
 
@@ -48,10 +50,10 @@ const ProfileImage = () => {
 			});
 
 			setImageUrl(url);
-			alert('Profile photo updated successfully!');
+			showAlert('Profile photo updated successfully!', 'success');
 		} catch (error) {
 			console.error('Error uploading image:', error);
-			alert('Failed to upload image');
+			showAlert('Error uploading image', 'error');
 		} finally {
 			setUploading(false);
 		}

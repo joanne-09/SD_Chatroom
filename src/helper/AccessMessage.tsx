@@ -17,9 +17,10 @@ import { findRoomById } from './AccessRoom';
 export const sendMessage = async (
     roomId: string,
     message: MessageData,
+    alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
 ) => {
     try {
-        findRoomById(roomId).then((room) => {
+        findRoomById(roomId, alertFunc).then((room) => {
             if (room) {
                 if (room.participants.includes(message.senderId) == false){
                     alert('You are not a participant of this room. Please join the room first.');
@@ -28,7 +29,7 @@ export const sendMessage = async (
             }
         }).catch((error) => {
             console.error('Error fetching room:', error);
-            alert('Error fetching room:' + error);
+            alertFunc('Error fetching room:' + error, 'error');
             return;
         })
 
@@ -47,7 +48,7 @@ export const sendMessage = async (
         );
         console.log('Message sent with ID:', messageRef.id);
     } catch (error) {
-        alert('Error sending message:' + error);
+        alertFunc('Error sending message:' + error, 'error');
         throw error;
     }
 }
@@ -72,7 +73,10 @@ export const newMessageAdded = (roomId: string, callback: (messages: MessageData
     return unsubscribe;
 }
 
-export const getAllMessages = async (roomId: string) => {
+export const getAllMessages = async (
+    roomId: string, 
+    alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
+) => {
     try {
         const messagesRef = collection(firestore, 'chatrooms', roomId, 'messages');
         const messagesSnap = await getDocs(messagesRef);
@@ -84,18 +88,22 @@ export const getAllMessages = async (roomId: string) => {
 
         return messages;
     } catch (error) {
-        alert('Error fetching messages:' + error);
+        alertFunc('Error fetching messages:' + error, 'error');
         throw error;
     }
 }
 
-export const deleteMessage = async (roomId: string, messageId: string) => {
+export const deleteMessage = async (
+    roomId: string, 
+    messageId: string,
+    alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
+) => {
     const messageRef = doc(firestore, 'chatrooms', roomId, 'messages', messageId);
     try {
         await deleteDoc(messageRef);
         console.log('Message deleted:', messageId);
     } catch (error) {
-        alert('Error deleting message:' + error);
+        alertFunc('Error deleting message:' + error, 'error');
         throw error;
     }
 }

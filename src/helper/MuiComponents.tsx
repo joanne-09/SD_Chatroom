@@ -151,7 +151,9 @@ const actions = [
   { icon: <AddComment />, name: 'Join Exist Chat' },
 ]
 
-export const StartChatButton = () => {
+export const StartChatButton = (
+  {alertFunc}: { alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void; }
+) => {
   const { authUser, profile, loading } = UseUser();
   const navigate = useNavigate();
 
@@ -168,10 +170,10 @@ export const StartChatButton = () => {
 
   const handleStartChat = (chatName: string) => {
     if (chatName && authUser) {
-      createNewRoom(chatName, authUser.uid).then((roomId) => {
+      createNewRoom(chatName, authUser.uid, alertFunc).then((roomId) => {
         navigate(`/chatroom/${roomId}`);
       }).catch((error) => {
-        alert("Error creating new chat room: " + error.message);
+        alertFunc("Error creating new chat room: " + error.message, "error");
       });
     }
     setOpenOption(false);
@@ -180,17 +182,17 @@ export const StartChatButton = () => {
   const handleJoinChat = async (chatId: string) => {
     try{
       if (chatId && authUser) {
-        joinExistRoom(chatId, authUser.uid).then(() => {
+        joinExistRoom(chatId, authUser.uid, alertFunc).then(() => {
           console.log('Joining the room:', chatId);
           navigate(`/chatroom/${chatId}`);
         }).catch((error) => {
-          alert('No room found with this ID!');
+          alertFunc('No room found with this ID!', 'error');
         });
       } else {
-        alert("Invalid room ID or user not authenticated.");
+        alertFunc('Invalid room ID or user not authenticated.', 'error');
       }
     }catch(error){
-      alert("Error joining chat room: " + error);
+      alertFunc('Error joining chat room: ' + error, 'error');
     }
     setOpenOption(false);
   }

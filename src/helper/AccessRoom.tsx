@@ -16,7 +16,11 @@ import { ChatroomData, UserData } from './Interface';
 import { error } from 'console';
 
 // Create a new chatroom
-const createNewRoom = async(roomName: string, userId: string) => {
+const createNewRoom = async(
+    roomName: string, 
+    userId: string,
+    alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
+) => {
     try {
         const roomData: ChatroomData = {
             roomId: '',
@@ -38,12 +42,16 @@ const createNewRoom = async(roomName: string, userId: string) => {
         console.log('New room created with ID:', roomRef.id);
         return roomRef.id;
     }catch(error){
-        alert('Error creating new room:' + error);
+        alertFunc('Error creating new room:' + error, 'error');
         throw error;
     }
 }
 
-const joinExistRoom = async(roomId: string, userId: string) => {
+const joinExistRoom = async(
+    roomId: string, 
+    userId: string,
+    alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
+) => {
     try {
         const roomRef = doc(firestore, 'chatrooms', roomId);
         const roomSnap = await getDoc(roomRef);
@@ -63,20 +71,22 @@ const joinExistRoom = async(roomId: string, userId: string) => {
                     console.error('Error adding room to user:', error);
                 });
 
-                alert(`Added to room: ${roomId}`);
+                alertFunc(`Room ${roomId} joined successfully!`, 'success');
             } else {
-                alert(`Already in room: ${roomId}`);
+                alertFunc(`Already in room: ${roomId}`, 'info');
             }
         }else{
-            alert('Room does not exist!');
+            alertFunc('Room does not exist!', 'error');
+            console.error('Room does not exist!');
         }
     }catch(error){
-        alert('Error joining room:' + error);
+        alertFunc('Error joining room:' + error, 'error');
+        console.error('Error joining room:', error);
         throw error;
     }
 }
 
-const findRoomById = async(roomId: string) => {
+const findRoomById = async(roomId: string, alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void) => {
     try {
         if(roomId){
             const roomRef = doc(firestore, 'chatrooms', roomId);
@@ -86,12 +96,14 @@ const findRoomById = async(roomId: string) => {
                 const roomData = roomSnap.data() as ChatroomData;
                 return roomData;
             }else{
-                alert('Room does not exist!');
+                alertFunc('Room does not exist!', 'error');
+                console.error('Room does not exist!');
                 return null;
             }
         }
     }catch(error){
-        alert('Error finding room:' + error);
+        alertFunc('Error finding room:' + error, 'error');
+        console.error('Error finding room:', error);
         throw error;
     }
 }
