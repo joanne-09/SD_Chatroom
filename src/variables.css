@@ -46,7 +46,8 @@
     /* Base Palette */
     --color-orange: #AF6B46;
     --color-green: #A5A58D;
-    --color-light: #F1F1F1;
+    --color-green-light: #e7e7e7;
+    --color-light: #f8f8f8;
     
     /* UI elements */
     --box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);

@@ -49,7 +49,7 @@
 .received .message {
     width: fit-content;
     padding: 5px;
-    background-color: var(--color-light);
+    background-color: var(--color-green-light);
     border-radius: 10px;
 }
 

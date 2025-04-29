@@ -7,6 +7,8 @@ import {
   styled,
 } from '@mui/material'
 import {
+  Search,
+  Close,
   Send,
   Gif,
 } from '@mui/icons-material';
@@ -21,9 +23,9 @@ import { Loading } from './Loading';
 import '../styles/Chatroom.css';
 
 const CustomTextField = styled(TextField)({
-  width: '90%',
+  width: '100%',
   height: 'auto',
-  backgroundColor: 'var(--color-navbar)',
+  backgroundColor: 'var(--color-light)',
   borderRadius: '10px',
   // overflow: 'hidden',
   color: '#ccc',
@@ -56,11 +58,15 @@ const Chatroom = () => {
 
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<MessageData[]>([]);
+  const [fullMessages, setFullMessages] = useState<MessageData[]>([]);
 
   const [deleteMsg, setDeleteMsg] = useState<string[]>([]);
 
   // handle sending GIF
   const [gifPickerOpen, setGifPickerOpen] = useState(false);
+
+  // handle message search
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const messageAreaRef = useRef<HTMLDivElement>(null);
 
@@ -99,6 +105,7 @@ const Chatroom = () => {
     if(roomId && !isLoading){
       const unsubscribe = newMessageAdded(roomId, (newMessages: MessageData[]) => {
         setMessages(newMessages);
+        setFullMessages(newMessages);
       });
       return () => unsubscribe();
     }
@@ -157,6 +164,13 @@ const Chatroom = () => {
           )}
         </div>
         <div className="Nav-bar-Links">
+          <IconButton
+            className='search-button'
+            onClick={() => setSearchOpen(!searchOpen)}
+          >
+            {searchOpen ? <Close fontSize='medium'/> : <Search fontSize='medium'/>}
+          </IconButton>
+
           <a onClick={() => navigate('/chatHome')}>Home</a>
         </div>
       </div>
@@ -165,6 +179,31 @@ const Chatroom = () => {
         <SideBar />
 
         <div className='Chatroom-Content'>
+          {
+          searchOpen && 
+          <div className='Search-Area'>
+            <CustomTextField
+              fullWidth
+              id="search-field"
+              label="Search messages"
+              variant="outlined"
+              size="small"
+              onChange={(e) => {
+                if(e.target.value === '') {
+                  setMessages(fullMessages);;
+                  return;
+                }
+
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredMessages = fullMessages.filter((msg) =>
+                  msg.content.toLowerCase().includes(searchTerm)
+                );
+                setMessages(filteredMessages);
+              }}
+            />
+          </div>
+          }
+
           <div className='Message-Area' ref={messageAreaRef}>
             {messages.length > 0 ? (
               messages.map((msg) => (

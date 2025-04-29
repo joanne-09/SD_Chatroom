@@ -36,11 +36,14 @@
   gap: 20px;
 }
 
-.Nav-bar-Links p {
-  text-decoration: none;
-  font-size: 1em;
+.Nav-bar-Links .search-button {
   color: var(--color-navbar-logo);
-  font-weight: 500;
+}
+
+.Nav-bar-Links .search-button:hover {
+  color: var(--color-text-orange);
+  background-color: transparent;
+  transform: scale(1.1);
 }
 
 .Nav-bar-Links a {
@@ -49,6 +52,8 @@
   color: var(--color-navbar-logo);
   font-weight: 500;
   transition: color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+  align-self: center;
 }
 
 .Nav-bar-Links a:hover {
@@ -72,6 +77,10 @@
   padding-right: 1vw;;
   overflow: hidden;
   background-color: var(--color-bg-ol-light);
+}
+
+.Search-Area {
+  padding: 10px;
 }
 
 .Message-Area {
