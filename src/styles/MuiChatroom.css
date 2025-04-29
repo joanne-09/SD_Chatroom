@@ -1,0 +1,60 @@
+.sidebar {
+    width: 20vw;
+    min-width: 200px;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--color-navbar);
+    color: var(--color-text-green);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.room-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2px !important;
+}
+
+.room-item {
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+    max-width: 100% !important;
+}
+
+.room-item.active {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.room-item:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.room-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.room-text .MuiListItemText-primary {
+    font-weight: 500;
+    color: var(--color-text-green) !important;
+}
+
+.room-text .MuiListItemText-secondary {
+    color: var(--color-text-green) !important;
+    font-size: 0.75rem;
+}
+
+.unread-badge {
+    margin-left: 8px !important;
+}
+
+.no-rooms {
+    padding: 20px !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-style: italic !important;
+}

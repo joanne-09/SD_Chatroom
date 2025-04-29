@@ -15,6 +15,7 @@ import { findRoomById } from '../helper/AccessRoom';
 import { sendMessage, getAllMessages, newMessageAdded, newMessageDeleted } from '../helper/AccessMessage';
 import GifPicker from './GifPicker';
 import { ChatroomData, MessageData } from '../helper/Interface';
+import { SideBar } from '../helper/MuiChatroom';
 import { MessageBox } from './MessageBox';
 import { Loading } from './Loading';
 import '../styles/Chatroom.css';
@@ -159,73 +160,83 @@ const Chatroom = () => {
         </div>
       </div>
 
-      <div className='Message-Area' ref={messageAreaRef}>
-        {messages.length > 0 ? (
-          messages.map((msg) => (
-            <MessageBox
-              key={msg.id}
-              roomId={roomId || ''}
-              message={msg}
+      <div className='Content'>
+        <SideBar />
+
+        <div className='Chatroom-Content'>
+          <div className='Message-Area' ref={messageAreaRef}>
+            {messages.length > 0 ? (
+              messages.map((msg) => (
+                <MessageBox
+                  key={msg.id}
+                  roomId={roomId || ''}
+                  message={msg}
+                />
+              ))
+            ) : (
+              <p>No messages yet.</p>
+            )}
+          </div>
+
+          <div className='Input-Area'>
+            <CustomTextField
+              id="text-field"
+              label="Type a message"
+              multiline
+              maxRows={2}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
             />
-          ))
-        ) : (
-          <p>No messages yet.</p>
-        )}
-      </div>
+            <IconButton
+              onClick={() => setGifPickerOpen(true)}
+              sx={{
+                color: 'var(--color-button-orange)',
+                mr: '8px',
+              }}
+            >
+              <Gif fontSize='large'/>
+            </IconButton>
 
-      <div className='Input-Area'>
-        <CustomTextField
-          id="text-field"
-          label="Type a message"
-          multiline
-          maxRows={2}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+            <CustomIconButton
+              onClick={() => {
+                if (roomId && authUser?.uid && profile?.email && message.trim()) {
+                  if (authUser?.uid) {
+                    const newmessage: MessageData = {
+                      senderId: authUser?.uid,
+                      senderEmail: profile?.email,
+                      content: message,
+                      messageType: 'text',
+                      timestamp: '',
+                    };
+                    sendMessage(
+                      roomId, 
+                      newmessage
+                    )
+                      .then(()=> {setMessage('')})
+                      .catch((error) => {console.error('Error sending message:', error)});
+                  } else {
+                    console.error("User ID is undefined.");
+                  }
+                } else {
+                  console.error("Missing required parameters for sending a message.");
+                }
+              }}
+            >
+              <Send />
+            </CustomIconButton>
+          </div>
+        </div>
+
+        
+        
+        <GifPicker 
+          open={gifPickerOpen}
+          onClose={() => setGifPickerOpen(false)}
+          onSelect={sendGif}
         />
-        <IconButton
-          onClick={() => setGifPickerOpen(true)}
-          sx={{
-            color: 'var(--color-button-orange)',
-            mr: '8px',
-          }}
-        >
-          <Gif />
-        </IconButton>
-
-        <CustomIconButton
-          onClick={() => {
-            if (roomId && authUser?.uid && profile?.email && message.trim()) {
-              if (authUser?.uid) {
-                const newmessage: MessageData = {
-                  senderId: authUser?.uid,
-                  senderEmail: profile?.email,
-                  content: message,
-                  messageType: 'text',
-                  timestamp: '',
-                };
-                sendMessage(
-                  roomId, 
-                  newmessage
-                )
-                  .then(()=> {setMessage('')})
-                  .catch((error) => {console.error('Error sending message:', error)});
-              } else {
-                console.error("User ID is undefined.");
-              }
-            } else {
-              console.error("Missing required parameters for sending a message.");
-            }
-          }}
-        >
-          <Send />
-        </CustomIconButton>
       </div>
+
       
-      <GifPicker 
-        open={gifPickerOpen}
-        onClose={() => setGifPickerOpen(false)}
-        onSelect={sendGif}
-      />
     </div>
   );
 }

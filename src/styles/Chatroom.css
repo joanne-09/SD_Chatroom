@@ -56,24 +56,115 @@
   transform: scale(1.1);
 }
 
+.Content {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: calc(100vh - 60px);
+  padding-top: 60px;
+  position: relative;
+}
+
+.Chatroom-Content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow: hidden;
+  background-color: var(--color-bg-ol-light);
+}
+
 .Message-Area {
   flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
+  padding: 20px 15px 10px;
   height: calc(100vh - 150px);
   overflow-y: auto;
-  padding-top: 60px;
   gap: 10px;
 
   scrollbar-width: thin;
+}
+
+.Message-Area:empty::before {
+  content: "No messages yet. Start chatting!";
+  color: var(--color-text-light);
+  font-style: italic;
+  text-align: center;
+  margin: auto;
+  padding: 40px;
 }
 
 .Input-Area {
   width: 100%;
   margin: 5px;
   display: flex;
-  align-content: center;
+  align-items: center;
   gap: 10px;
+  position: sticky;
+  bottom: 0;
+}
+
+/* Enhance text field appearance */
+.Input-Area .MuiTextField-root {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* Button hover effects */
+.Input-Area button {
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.Input-Area button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+/* Message Animations */
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-box {
+  animation: messageAppear 0.3s ease-out forwards;
+}
+
+/* GIF specific styling */
+.message-gif {
+  transition: transform 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .Nav-bar {
+    padding: 0 15px;
+  }
+  
+  .Nav-bar-Logo {
+    font-size: 1.3em;
+  }
+  
+  .Message-Area {
+    padding: 15px 10px;
+  }
+  
+  .Input-Area {
+    padding: 10px 15px;
+  }
+  
+  .message-box {
+    max-width: 90%;
+  }
 }
