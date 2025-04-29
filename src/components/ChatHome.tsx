@@ -4,7 +4,7 @@ import { auth } from '../config';
 import { ChatroomBlock } from './ChatroomBlock';
 import { Loading } from './Loading';
 import { UseUser } from '../helper/UserContext';
-import { getUserRooms, newRoomsAdded, addFriendToUser } from '../helper/AccessUser';
+import { newRoomsAdded, addFriendToUser } from '../helper/AccessUser';
 import { UserRoom } from '../helper/Interface';
 import { AccountMenu, StartChatButton } from '../helper/MuiComponents';
 import '../styles/ChatHome.css';

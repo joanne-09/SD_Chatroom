@@ -10,17 +10,22 @@ import {
   ListItemText,
   IconButton,
   Drawer,
-  Badge,
+  Avatar,
+  Autocomplete,
+  TextField,
 } from '@mui/material'
 import {
   Menu,
   Close,
   Chat,
+  Add,
 } from '@mui/icons-material'
 import { UseUser } from '../helper/UserContext';
-import { getUserRooms, newRoomsAdded } from '../helper/AccessUser';
-import { UserRoom } from '../helper/Interface';
+import { newRoomsAdded, newFriendsAdded } from '../helper/AccessUser';
+import { joinExistRoom } from '../helper/AccessRoom';
+import { UserRoom, UserFriend } from '../helper/Interface';
 import '../styles/SidebarChat.css';
+import { join } from 'path';
 
 export const SideBar = () => {
   const navigate = useNavigate();
@@ -29,6 +34,8 @@ export const SideBar = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [rooms, setRooms] = useState<UserRoom[]>([]);
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
+  const [friends, setFriends] = useState<UserFriend[]>([]);
+  const [friendEmail, setFriendEmail] = useState<string>('');
 
   const [open, setOpen] = useState(false);
 
@@ -57,7 +64,22 @@ export const SideBar = () => {
         }
       };
       fetchRooms();
-    }, [authUser, loading]);
+    }, [authUser, loading]
+  );
+
+  // Get All Friends for User
+  useEffect(() => {
+    const fetchFriends = async () => {
+      if (authUser && !loading) {
+        const unsubscribe = await newFriendsAdded(authUser.uid, (friends: UserFriend[]) => {
+          setFriends(friends);
+          setIsLoading(false);
+        });
+        return () => unsubscribe();
+      }
+    };
+    fetchFriends();
+  }, [authUser, loading]);
 
   // Get current roomId
   useEffect(() => {
@@ -95,14 +117,14 @@ export const SideBar = () => {
                   setOpen(false);
                 }}
               >
+                <Avatar className="room-avatar">
+                  {room.roomName?.charAt(0).toUpperCase() || <Chat />}
+                </Avatar>
                 <ListItemText 
                   primary={room.roomName} 
                   secondary={room.roomId}
                   className="room-text"
                 />
-                {(room.unreadCount ?? 0) > 0 && (
-                  <Badge badgeContent={room.unreadCount} color="error" className="unread-badge" />
-                )}
               </ListItemButton>
             </ListItem>
           ))
@@ -112,6 +134,40 @@ export const SideBar = () => {
           </ListItem>
         )}
       </List>
+
+      <Divider />
+      
+      <Box
+        className="Add-Friends"
+      >
+        <Autocomplete 
+          disablePortal
+          options={friends.map((friend) => friend.friendEmail)}
+          renderInput={(params) => <TextField {...params} label="Add Friends" />}
+          fullWidth
+          value={friendEmail}
+          onChange={(event, value) => {
+            setFriendEmail(value || '');
+          }}
+        />
+        <IconButton
+          className="add-friend-button"
+          onClick={() => {
+            if (!friendEmail) {
+              alert("Please select a friend to add.");
+              return;
+            }
+            const friendId = friends.find(friend => friend.friendEmail === friendEmail)?.friendId;
+            if(activeRoom && friendId) {
+              joinExistRoom(activeRoom, friendId);
+            }
+            setFriendEmail('');
+          }}
+        >
+          <Add />
+        </IconButton>
+      </Box>
+      
     </>
   )
 

@@ -30,7 +30,7 @@
     --color-border-green: #404337;
 
     /* Button colors */
-    --color-button-text: #F0EFEB;
+    --color-button-text: #FFF3EB;
     --color-button-green: #606553;
     --color-button-green-dark: #4B4F40;
     --color-button-orange: #AF6B46;
@@ -50,6 +50,6 @@
     --color-light: #f8f8f8;
     
     /* UI elements */
-    --box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+    --box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
     --bg-gradient: linear-gradient(135deg, #E2C8B6, #FFF3EB);
 }

@@ -84,30 +84,8 @@ export const addRoomToUser = async (userId: string, roomId: string, roomName: st
     }
 }
 
-export const getUserRooms = async (userId: string) => {
-    try{
-        getUserById(userId).then((userData) => {
-            if(userData){
-                const rooms = userData.rooms || [];
-                return rooms;
-            }else{
-                console.log('User not found!');
-                return null;
-            }
-        }).catch((error) => {
-            console.error('Error fetching user data:', error);
-            return null;
-        });
-    }catch(error){
-        console.error('Error fetching user rooms:', error);
-        return null;
-    }
-}
-
 export const newRoomsAdded = async (userId: string, callback: (rooms: UserRoom[]) => void) => {
-    const userRef = query(collection(firestore, 'users'), where('userId', '==', userId));
-    const userSnap = (await getDocs(userRef)).docs[0];
-    const roomRef = collection(firestore, 'users', userSnap.id, 'rooms');
+    const roomRef = collection(firestore, 'users', userId, 'rooms');
 
     const unsubscribe = onSnapshot(roomRef, (snapshot) => {
         const rooms: UserRoom[] = [];
@@ -180,22 +158,21 @@ export const addFriendToUser = async (userId: string, friendEmail: string) => {
     }
 }
 
-export const getUserFriends = async (userId: string) => {
-    try{
-        getUserById(userId).then((userData) => {
-            if(userData){
-                const friends = userData.friends || [];
-                return friends;
-            }else{
-                console.log('User not found!');
-                return null;
-            }
-        }).catch((error) => {
-            console.error('Error fetching user data:', error);
-            return null;
+export const newFriendsAdded = async (userId: string, callback: (friends: UserFriend[]) => void) => {
+    const friendRef = collection(firestore, 'users', userId, 'friends');
+
+    const unsubscribe = onSnapshot(friendRef, (snapshot) => {
+        const friends: UserFriend[] = [];
+        snapshot.forEach((doc) => {
+            friends.push({
+                id: doc.id,
+                ...doc.data() as UserFriend,
+            })
         });
-    }catch(error){
-        console.error('Error adding user friends:', error);
-        return null;
-    }
+        callback(friends);
+    }, (error) => {
+        console.error('Error listening for new friends:', error);
+    });
+
+    return unsubscribe;
 }

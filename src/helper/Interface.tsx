@@ -34,7 +34,6 @@ export interface UserRoom {
     id?: string;
     roomId: string;
     roomName: string;
-    unreadCount?: number;
 }
 
 export interface UserFriend {

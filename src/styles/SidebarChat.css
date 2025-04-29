@@ -1,7 +1,7 @@
 .sidebar {
     width: 20vw;
     min-width: 200px;
-    height: 100vh;
+    height: calc(100vh - 60px);
     overflow-y: auto;
     overflow-x: hidden;
     background-color: var(--color-navbar);
@@ -11,6 +11,7 @@
     flex-direction: column;
     box-sizing: border-box;
     position: relative;
+    box-shadow: var(--box-shadow);
 }
 
 .sidebar-header {
@@ -47,13 +48,15 @@
     left: 10px;
     z-index: 1200 !important;
     color: var(--color-button-green-dark);
-    box-shadow: 0 2px 8px rbga(0,0,0,0.3);
+    box-shadow: 0 2px 8px rbga(0, 0, 0, 0.3);
 }
 
 .room-list {
     flex: 1;
     overflow-y: auto;
-    padding: 2px !important;
+    padding: 5px !important;
+
+    scrollbar-width: thin;
 }
 
 .room-item {
@@ -68,6 +71,12 @@
 
 .room-item:hover {
     background-color: rgba(255, 255, 255, 0.3);
+}
+
+.room-avatar {
+    margin-right: 12px !important;
+    background-color: var(--color-button-orange) !important;
+    color: white !important;
 }
 
 .room-text {
@@ -105,4 +114,23 @@
     .Chatroom-Content {
         margin-left: 0 !important;
     }
+}
+
+.Add-Friends {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    gap: 10px;
+}
+
+.add-friend-button {
+    color: var(--color-button-text) !important;
+    background-color: var(--color-button-orange) !important;
+    transition: all 0.2s ease !important;
+}
+
+.add-friend-button:hover {
+    background-color: var(--color-button-orange-dark) !important;
+    transform: scale(1.05) !important;
 }
