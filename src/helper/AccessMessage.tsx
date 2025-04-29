@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { auth, firestore } from '../config';
 import { MessageData } from './Interface';
+import { findRoomById } from './AccessRoom';
 
 export const sendMessage = async (
     roomId: string,
@@ -20,6 +21,19 @@ export const sendMessage = async (
     content: string
 ) => {
     try {
+        findRoomById(roomId).then((room) => {
+            if (room) {
+                if (room.participants.includes(senderId) == false){
+                    alert('You are not a participant of this room. Please join the room first.');
+                    return;
+                }
+            }
+        }).catch((error) => {
+            console.error('Error fetching room:', error);
+            alert('Error fetching room:' + error);
+            return;
+        })
+
         const messageData: MessageData = {
             senderId,
             senderEmail,
