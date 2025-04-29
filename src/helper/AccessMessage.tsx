@@ -3,6 +3,7 @@ import {
     addDoc,
     getDoc,
     getDocs,
+    deleteDoc,
     doc,
     serverTimestamp,
     query,
@@ -72,4 +73,33 @@ export const getAllMessages = async (roomId: string) => {
         alert('Error fetching messages:' + error);
         throw error;
     }
+}
+
+export const deleteMessage = async (roomId: string, messageId: string) => {
+    const messageRef = doc(firestore, 'chatrooms', roomId, 'messages', messageId);
+    try {
+        await deleteDoc(messageRef);
+        console.log('Message deleted:', messageId);
+    } catch (error) {
+        alert('Error deleting message:' + error);
+        throw error;
+    }
+}
+
+export const newMessageDeleted = (roomId: string, callback: (messageId: string) => void) => {
+    const messageRef = collection(firestore, 'chatrooms', roomId, 'messages');
+    const messageQuery = query(messageRef, orderBy('timestamp', 'asc'));
+
+    const unsubscribe = onSnapshot(messageQuery, (snapshot) => {
+        const messages: MessageData[] = [];
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === 'removed') {
+                callback(change.doc.id);
+            }
+        })
+    }, (error) => {
+        console.error('Error listening messages:', error);
+    });
+
+    return unsubscribe;
 }

@@ -9,7 +9,7 @@ import {
 import {Send} from '@mui/icons-material';
 import { UseUser } from '../helper/UserContext';
 import { findRoomById } from '../helper/AccessRoom';
-import { sendMessage, getAllMessages, newMessageAdded } from '../helper/AccessMessage';
+import { sendMessage, getAllMessages, newMessageAdded, newMessageDeleted } from '../helper/AccessMessage';
 import { ChatroomData, MessageData } from '../helper/Interface';
 import { MessageBox } from './MessageBox';
 import { Loading } from './Loading';
@@ -45,6 +45,8 @@ const Chatroom = () => {
 
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<MessageData[]>([]);
+
+  const [deleteMsg, setDeleteMsg] = useState<string[]>([]);
 
   const messageAreaRef = useRef<HTMLDivElement>(null);
 
@@ -88,6 +90,17 @@ const Chatroom = () => {
     }
   }, [roomId, isLoading]);
 
+  useEffect(() => {
+    if(roomId && !isLoading){
+      const unsubscribeDelete = newMessageDeleted(roomId, (messageId: string) => {
+        setDeleteMsg((prev) => [...prev, messageId]);
+        console.log('Message deleted:', messageId);
+      });
+
+      return () => unsubscribeDelete();
+    }
+  }, [roomId, isLoading]);
+
   // Auto Scroll to Bottom
   useEffect(() => {
     if (messageAreaRef.current) {
@@ -124,6 +137,7 @@ const Chatroom = () => {
           messages.map((msg) => (
             <MessageBox
               key={msg.id}
+              roomId={roomId || ''}
               message={msg}
             />
           ))
