@@ -13,7 +13,9 @@ export interface MessageData {
     id?: string;
     senderId: string;
     senderEmail: string;
+    messageType: 'text' | 'gif';
     content: string;
+    gifUrl?: string;
     timestamp: any;
 }
 

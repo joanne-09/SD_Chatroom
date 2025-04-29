@@ -16,14 +16,12 @@ import { findRoomById } from './AccessRoom';
 
 export const sendMessage = async (
     roomId: string,
-    senderId: string,
-    senderEmail: string,
-    content: string
+    message: MessageData,
 ) => {
     try {
         findRoomById(roomId).then((room) => {
             if (room) {
-                if (room.participants.includes(senderId) == false){
+                if (room.participants.includes(message.senderId) == false){
                     alert('You are not a participant of this room. Please join the room first.');
                     return;
                 }
@@ -35,9 +33,11 @@ export const sendMessage = async (
         })
 
         const messageData: MessageData = {
-            senderId,
-            senderEmail,
-            content,
+            senderId: message.senderId,
+            senderEmail: message.senderEmail,
+            content: message.content,
+            messageType: message.messageType,
+            gifUrl: message.gifUrl || '',
             timestamp: serverTimestamp(),
         };
 

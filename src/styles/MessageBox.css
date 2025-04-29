@@ -1,5 +1,5 @@
 .message-box {
-    max-width: 70%;
+    max-width: 45vw;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -12,11 +12,20 @@
     border-radius: 8px;
     white-space: pre-wrap;
     word-break: break-word;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 .sent {
     width: auto;
-    align-self: end;
+    align-self: flex-end;
+}
+
+.sent .message-content {
+    align-items: flex-end;
+    justify-content: center;
+    text-align: right;
 }
 
 .sent .message {
@@ -27,7 +36,14 @@
 }
 
 .received {
+    width: auto;
     align-self: flex-start;
+}
+
+.received .message-content {
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
 }
 
 .received .message {
@@ -39,6 +55,5 @@
 
 .sender, .timestamp {
     font-size: 0.7em;
-    margin-bottom: 5px;
     opacity: 0.7;
 }

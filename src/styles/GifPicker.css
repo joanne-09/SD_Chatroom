@@ -1,0 +1,39 @@
+/* Create src/styles/GifPicker.css */
+.gif-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gif-search {
+    margin-bottom: 20px;
+}
+
+.gif-results {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.gif-item {
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.gif-item:hover {
+    transform: scale(1.05);
+}
+
+.gif-item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.gif-loading,
+.gif-no-results {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}

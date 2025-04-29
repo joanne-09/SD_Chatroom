@@ -58,7 +58,24 @@ export const MessageBox = (
 
       <div className='message-content'>
         <p className='sender'>{message.senderEmail}</p>
-        <p className='message'>{message.content}</p>
+
+        {
+          (() => {
+            switch (message.messageType) {
+              case 'text':
+                return <p className='message'>{message.content}</p>;
+              case 'gif':
+                return (
+                  <div className='gif-container'>
+                    <img src={message.gifUrl} alt='GIF' className='gif' />
+                  </div>
+                );
+              default:
+                return <p className='message'>Unsupported message type</p>;
+            }
+          })()
+        }
+
         <p className='timestamp'>
           {handleTimestanp(message.timestamp)}
         </p>

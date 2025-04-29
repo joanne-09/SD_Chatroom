@@ -6,10 +6,14 @@ import {
   IconButton,
   styled,
 } from '@mui/material'
-import {Send} from '@mui/icons-material';
+import {
+  Send,
+  Gif,
+} from '@mui/icons-material';
 import { UseUser } from '../helper/UserContext';
 import { findRoomById } from '../helper/AccessRoom';
 import { sendMessage, getAllMessages, newMessageAdded, newMessageDeleted } from '../helper/AccessMessage';
+import GifPicker from './GifPicker';
 import { ChatroomData, MessageData } from '../helper/Interface';
 import { MessageBox } from './MessageBox';
 import { Loading } from './Loading';
@@ -47,6 +51,9 @@ const Chatroom = () => {
   const [messages, setMessages] = useState<MessageData[]>([]);
 
   const [deleteMsg, setDeleteMsg] = useState<string[]>([]);
+
+  // handle sending GIF
+  const [gifPickerOpen, setGifPickerOpen] = useState(false);
 
   const messageAreaRef = useRef<HTMLDivElement>(null);
 
@@ -108,6 +115,26 @@ const Chatroom = () => {
     }
   }, [messages]);
 
+  // Send GIF
+  const sendGif = (gifUrl: string) => {
+    if(roomId && authUser?.uid && profile?.email){
+      const gifMessage: MessageData = {
+        senderId: authUser.uid,
+        senderEmail: profile.email,
+        content: "GIF image",
+        messageType: 'gif',
+        gifUrl: gifUrl,
+        timestamp: '',
+      };
+
+      sendMessage(roomId, gifMessage).catch((error) => {
+        console.error('Error sending GIF:', error);
+      });
+    }
+
+    setGifPickerOpen(false);
+  }
+
   if ((isLoading && !roomData) || loading) {
     return <Loading />;
   }
@@ -155,12 +182,36 @@ const Chatroom = () => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
+        <IconButton
+          onClick={() => setGifPickerOpen(true)}
+          sx={{
+            color: 'var(--color-button-orange)',
+            mr: '8px',
+          }}
+        >
+          <Gif />
+        </IconButton>
+
         <CustomIconButton
           onClick={() => {
             if (roomId && authUser?.uid && profile?.email && message.trim()) {
-              sendMessage(roomId, authUser.uid, profile.email, message)
-                .then(()=> {setMessage('')})
-                .catch((error) => {console.error('Error sending message:', error)});
+              if (authUser?.uid) {
+                const newmessage: MessageData = {
+                  senderId: authUser?.uid,
+                  senderEmail: profile?.email,
+                  content: message,
+                  messageType: 'text',
+                  timestamp: '',
+                };
+                sendMessage(
+                  roomId, 
+                  newmessage
+                )
+                  .then(()=> {setMessage('')})
+                  .catch((error) => {console.error('Error sending message:', error)});
+              } else {
+                console.error("User ID is undefined.");
+              }
             } else {
               console.error("Missing required parameters for sending a message.");
             }
@@ -169,6 +220,12 @@ const Chatroom = () => {
           <Send />
         </CustomIconButton>
       </div>
+      
+      <GifPicker 
+        open={gifPickerOpen}
+        onClose={() => setGifPickerOpen(false)}
+        onSelect={sendGif}
+      />
     </div>
   );
 }
