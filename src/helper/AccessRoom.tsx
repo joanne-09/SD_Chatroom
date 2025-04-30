@@ -2,6 +2,7 @@ import {
     collection,
     addDoc,
     getDoc,
+    getDocs,
     query,
     where,
     onSnapshot,
@@ -9,6 +10,7 @@ import {
     setDoc,
     orderBy,
     serverTimestamp,
+    updateDoc,
 } from 'firebase/firestore';
 import { auth, firestore } from '../config';
 import { addRoomToUser } from './AccessUser';
@@ -71,7 +73,7 @@ const joinExistRoom = async(
                     console.error('Error adding room to user:', error);
                 });
 
-                alertFunc(`Room ${roomId} joined successfully!`, 'success');
+                alertFunc(`User ${userId} Room ${roomId} joined successfully!`, 'success');
             } else {
                 alertFunc(`Already in room: ${roomId}`, 'info');
             }
@@ -82,6 +84,39 @@ const joinExistRoom = async(
     }catch(error){
         alertFunc('Error joining room:' + error, 'error');
         console.error('Error joining room:', error);
+        throw error;
+    }
+}
+
+const updateRoomDoc = async (
+    roomId: string, 
+    data: Partial<ChatroomData>, 
+    alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
+) => {
+    try {
+        const roomRef = doc(firestore, 'chatrooms', roomId);
+        const roomSnap = await getDoc(roomRef);
+        const roomData = roomSnap.data() as ChatroomData;
+        const participants = roomData.participants || [];
+
+        await updateDoc(roomRef, data);
+        console.log('Room document updated:', roomId);
+
+        const updateUserRooms = participants.map(async (userId) => {
+            const userRef = query(collection(firestore, 'users', userId, 'rooms'), where('roomId', '==', roomId));
+            const userSnap = await getDocs(userRef);
+            const userDoc = userSnap.docs[0];
+            if (userDoc) {
+                await updateDoc(doc(firestore, 'users', userId, 'rooms', userDoc.id), {roomName: data.name});
+                console.log('User room document updated:', userId);
+            }
+        })
+        await Promise.all(updateUserRooms);
+
+        alertFunc('Room updated successfully!', 'success');
+    } catch(error){
+        console.error('Error updating room document:', error);
+        alertFunc('Error updating room document:' + error, 'error');
         throw error;
     }
 }
@@ -108,4 +143,4 @@ const findRoomById = async(roomId: string, alertFunc: (message: string, type: 's
     }
 }
 
-export {createNewRoom, joinExistRoom, findRoomById};
+export {createNewRoom, joinExistRoom, updateRoomDoc, findRoomById};

@@ -70,6 +70,9 @@ const Chatroom = () => {
   // handle message search
   const [searchOpen, setSearchOpen] = useState(false);
 
+  // handle if update room name
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const messageAreaRef = useRef<HTMLDivElement>(null);
 
   // Check if user is authenticated
@@ -101,7 +104,7 @@ const Chatroom = () => {
           setIsLoading(false);
         });
     }
-  }, [roomId, authUser]);
+  }, [roomId, authUser, refreshKey]);
   
   // Update Messages
   useEffect(() => {
@@ -157,7 +160,7 @@ const Chatroom = () => {
   }
 
   return (
-    <div className='Chatroom'>
+    <div className='Chatroom' key={refreshKey}>
       <div className="Nav-bar">
         <div className="Nav-bar-Logo">
           {roomData ? (
@@ -179,7 +182,9 @@ const Chatroom = () => {
       </div>
 
       <div className='Content'>
-        <SideBar />
+        <SideBar 
+          refresh={() => {setRefreshKey((prev) => prev + 1)}}
+        />
 
         <div className='Chatroom-Content'>
           {

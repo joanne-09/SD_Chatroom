@@ -13,22 +13,32 @@ import {
   Avatar,
   Autocomplete,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from '@mui/material'
 import {
   Menu,
   Close,
   Chat,
   Add,
+  Settings,
 } from '@mui/icons-material'
 import { UseUser } from '../helper/UserContext';
 import { UseAlert } from '../helper/CreateAlert';
 import { newRoomsAdded, newFriendsAdded } from '../helper/AccessUser';
-import { joinExistRoom } from '../helper/AccessRoom';
-import { UserRoom, UserFriend } from '../helper/Interface';
+import { joinExistRoom, updateRoomDoc } from '../helper/AccessRoom';
+import { ProfileImage } from '../helper/AccessImage';
+import { UserRoom, UserFriend, ChatroomData } from '../helper/Interface';
 import '../styles/SidebarChat.css';
-import { join } from 'path';
+import { ref, set } from 'firebase/database';
 
-export const SideBar = () => {
+export const SideBar = (
+  {refresh} :
+  {refresh: () => void}
+) => {
   const navigate = useNavigate();
   const { authUser, profile, loading } = UseUser();
   const { showAlert } = UseAlert();
@@ -36,10 +46,15 @@ export const SideBar = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [rooms, setRooms] = useState<UserRoom[]>([]);
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
+  const [activeRoomName, setActiveRoomName] = useState<string | null>(null);
+  const [roomName, setRoomName] = useState<string>('');
+
   const [friends, setFriends] = useState<UserFriend[]>([]);
   const [friendEmail, setFriendEmail] = useState<string>('');
 
   const [open, setOpen] = useState(false);
+
+  const [settings, setSettings] = useState(false);
 
   // Toggle Drawer
   const toggleDrawer = () => {
@@ -90,8 +105,12 @@ export const SideBar = () => {
     if (match) {
       const roomId = match[1];
       setActiveRoom(roomId);
+      setActiveRoomName(rooms.find(room => room.roomId === roomId)?.roomName || null);
+      setRoomName(activeRoomName || '');
     } else {
       setActiveRoom(null);
+      setActiveRoomName(null);
+      setRoomName('');
     }
   }, [window.location.pathname]);
 
@@ -100,6 +119,15 @@ export const SideBar = () => {
     <>
       <Typography className="sidebar-header">
         {profile ? profile?.name : "Guest"}
+
+        <IconButton
+          className="settings-button"
+          onClick={() => setSettings(true)}
+          aria-label="settings"
+          sx={{ color: 'var(--color-button-orange)'}}
+        >
+          <Settings />
+        </IconButton>
       </Typography>
 
       <Divider />
@@ -116,6 +144,8 @@ export const SideBar = () => {
                 onClick={() => {
                   navigate(`/chatroom/${room.roomId}`);
                   setActiveRoom(room.roomId);
+                  setActiveRoomName(room.roomName);
+                  setRoomName(room.roomName);
                   setOpen(false);
                 }}
               >
@@ -170,6 +200,50 @@ export const SideBar = () => {
         </IconButton>
       </Box>
       
+      <Dialog
+        open={settings}
+        onClose={() => setSettings(false)}
+        className="settings-dialog"
+      >
+        <DialogTitle>
+          {`${activeRoomName} Settings` || "Settings"}
+        </DialogTitle>
+
+        <DialogContent className="settings-content">
+          <ProfileImage />
+          <TextField 
+            label="Room Name"
+            variant="standard"
+            fullWidth
+            value={roomName}
+            onChange={(e) => {
+              setRoomName(e.target.value);
+            }}
+          />
+        </DialogContent>
+
+        <DialogActions className="settings-actions">
+          <Button onClick={() => setSettings(false)} color="primary">
+            Close
+          </Button>
+          <Button
+            onClick={() => {
+              const data: Partial<ChatroomData> = {
+                name: roomName,
+              };
+              if(activeRoom){
+                updateRoomDoc(activeRoom, data, showAlert)
+                  .then(() => {
+                    refresh()
+                  });
+              }
+              setSettings(false);
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 

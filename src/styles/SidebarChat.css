@@ -20,6 +20,9 @@
     color: var(--color-text-green);
     font-size: 1.5em;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .mobile-sidebar {
