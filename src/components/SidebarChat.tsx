@@ -30,10 +30,9 @@ import { UseUser } from '../helper/UserContext';
 import { UseAlert } from '../helper/CreateAlert';
 import { newRoomsAdded, newFriendsAdded } from '../helper/AccessUser';
 import { joinExistRoom, updateRoomDoc } from '../helper/AccessRoom';
-import { ProfileImage } from '../helper/AccessImage';
+import { ProfileImage, getImageData } from '../helper/AccessImage';
 import { UserRoom, UserFriend, ChatroomData } from '../helper/Interface';
 import '../styles/SidebarChat.css';
-import { ref, set } from 'firebase/database';
 
 export const SideBar = (
   {refresh} :
@@ -45,6 +44,7 @@ export const SideBar = (
 
   const [isLoading, setIsLoading] = useState(true);
   const [rooms, setRooms] = useState<UserRoom[]>([]);
+  const [roomImages, setRoomImages] = useState<Record<string, string | null>>({});
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
   const [activeRoomName, setActiveRoomName] = useState<string | null>(null);
   const [roomName, setRoomName] = useState<string>('');
@@ -65,6 +65,18 @@ export const SideBar = (
   if (!authUser && !loading) {
     showAlert("No authenticated user found.", "error");
     setTimeout(() => {navigate('/')}, 1500);
+  }
+
+  const loadRoomImage = async (roomId: string) => {
+    try{
+      const image = await getImageData('roomcover', roomId);
+      setRoomImages(prevImages => ({
+        ...prevImages,
+        [roomId]: image || null,
+      }));
+    }catch(error){
+      console.error('Error fetching room image:', error);
+    }
   }
 
   // Get All Rooms for User
@@ -114,6 +126,15 @@ export const SideBar = (
     }
   }, [window.location.pathname]);
 
+  // Get room images
+  useEffect(() => {
+    if (rooms.length > 0) {
+      rooms.forEach(room => {
+        loadRoomImage(room.roomId);
+      });
+    }
+  }, [rooms]);
+
   // Sidebar Component
   const sidebar = (
     <>
@@ -122,7 +143,18 @@ export const SideBar = (
 
         <IconButton
           className="settings-button"
-          onClick={() => setSettings(true)}
+          onClick={() => {
+            // Refresh the room name from the current active room
+            if (activeRoom) {
+              const currentRoom = rooms.find(room => room.roomId === activeRoom);
+              if (currentRoom) {
+                setActiveRoomName(currentRoom.roomName);
+                setRoomName(currentRoom.roomName);
+                loadRoomImage(activeRoom);
+              }
+            }
+            setSettings(true);
+          }}
           aria-label="settings"
           sx={{ color: 'var(--color-button-orange)'}}
         >
@@ -149,8 +181,11 @@ export const SideBar = (
                   setOpen(false);
                 }}
               >
-                <Avatar className="room-avatar">
-                  {room.roomName?.charAt(0).toUpperCase() || <Chat />}
+                <Avatar 
+                  className="room-avatar"
+                  src={roomImages[room.roomId] || ''}
+                >
+                  {!roomImages[room.roomId] && (room.roomName?.charAt(0).toUpperCase() || <Chat />)}
                 </Avatar>
                 <ListItemText 
                   primary={room.roomName} 
@@ -210,7 +245,18 @@ export const SideBar = (
         </DialogTitle>
 
         <DialogContent className="settings-content">
-          <ProfileImage />
+          <ProfileImage 
+            type="roomcover"
+            roomId={activeRoom || ''}
+            onImageUpdate={(imageUrl) => {
+              setRoomImages(prevImages => ({
+                ...prevImages,
+                [activeRoom || '']: imageUrl,
+              }));
+              refresh();
+            }}
+          />
+
           <TextField 
             label="Room Name"
             variant="standard"
@@ -234,6 +280,17 @@ export const SideBar = (
               if(activeRoom){
                 updateRoomDoc(activeRoom, data, showAlert)
                   .then(() => {
+                    setActiveRoomName(roomName);
+                    setRoomName(roomName);
+
+                    setRooms(prevRooms => 
+                      prevRooms.map(room => 
+                        room.roomId === activeRoom 
+                          ? {...room, roomName: roomName} 
+                          : room
+                      )
+                    );
+
                     refresh()
                   });
               }

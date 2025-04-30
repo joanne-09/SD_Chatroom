@@ -44,7 +44,9 @@ const UserProfile = () => {
 
 			<div className="profile-content">
 
-				<ProfileImage />
+				<ProfileImage 
+					type={'profile'}
+				/>
 
 				<div className="profile-details">
 					<TextField 

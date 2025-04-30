@@ -6,6 +6,7 @@ export interface ChatroomData {
     createdAt: any;
     admin: string[];
     participants: string[];
+    roomImage?: string;
     messages?: MessageData[];
 }
 
@@ -13,9 +14,10 @@ export interface MessageData {
     id?: string;
     senderId: string;
     senderEmail: string;
-    messageType: 'text' | 'gif';
+    messageType: 'text' | 'gif' | 'image';
     content: string;
     gifUrl?: string;
+    imageUrl?: string;
     timestamp: any;
 }
 
@@ -26,6 +28,7 @@ export interface UserData {
     email: string;
     phone?: string;
     address?: string;
+    profileImage?: string;
     rooms?: UserRoom[];
     friends?: UserFriend[];
 }
