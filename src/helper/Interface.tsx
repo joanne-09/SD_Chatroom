@@ -37,6 +37,7 @@ export interface UserRoom {
     id?: string;
     roomId: string;
     roomName: string;
+    notification: boolean;
 }
 
 export interface UserFriend {

@@ -75,6 +75,7 @@ export const addRoomToUser = async (userId: string, roomId: string, roomName: st
         const roomData: UserRoom = {
             roomId,
             roomName,
+            notification: true,
         };
         const roomRef = await addDoc(userRoom, roomData);
         console.log('Room added to user:', roomId);
@@ -101,6 +102,24 @@ export const newRoomsAdded = async (userId: string, callback: (rooms: UserRoom[]
     });
 
     return unsubscribe;
+}
+
+export const getUserRoomById = async (userId: string, roomId: string) => {
+    try{
+        const roomRef = query(collection(firestore, 'users', userId, 'rooms'), where('roomId', '==', roomId));
+        const roomSnap = await getDocs(roomRef);
+
+        if (!roomSnap.empty) {
+            console.log('Room data:', roomSnap.docs[0].data());
+            const roomDoc = roomSnap.docs[0];
+            return roomDoc.data() as UserRoom;
+        } else {
+            return null;
+        }
+    }catch(error){
+        console.error('Error fetching user room by id:', error);
+        return null;
+    }
 }
 
 const friendAlreadyExists = async (userId: string, friendEmail: string) => {
@@ -175,4 +194,28 @@ export const newFriendsAdded = async (userId: string, callback: (friends: UserFr
     });
 
     return unsubscribe;
+}
+
+export const updateNotification = async (
+    userId: string,
+    roomId: string,
+    enable: boolean,
+) => {
+    try {
+        const roomRef = collection(firestore, 'users', userId, 'rooms');
+        const roomQuery = query(roomRef, where('roomId', '==', roomId));
+        const roomSnap = await getDocs(roomQuery);
+
+        if (!roomSnap.empty) {
+            const roomDoc = roomSnap.docs[0];
+            await updateDoc(roomDoc.ref, { notification: enable });
+            console.log('Notification updated for room:', roomId);
+        } else {
+            console.error('Room not found for user:', userId);
+        }
+
+    }catch(error){
+        console.error('Error updating notification:', error);
+        throw error;
+    }
 }

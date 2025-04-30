@@ -15,11 +15,13 @@ import {
 } from '@mui/icons-material';
 import { UseUser } from '../helper/UserContext';
 import { UseAlert } from '../helper/CreateAlert';
+import { resetUnreadCount } from '../helper/UnreadMessages';
+import { newRoomsAdded, updateNotification } from '../helper/AccessUser';
 import { findRoomById } from '../helper/AccessRoom';
 import { sendMessage, getAllMessages, newMessageAdded } from '../helper/AccessMessage';
 import { getImageData } from '../helper/AccessImage';
 import GifPicker from './GifPicker';
-import { ChatroomData, MessageData } from '../helper/Interface';
+import { ChatroomData, MessageData, UserRoom } from '../helper/Interface';
 import { SideBar } from './SidebarChat';
 import { MessageBox } from './MessageBox';
 import { Loading } from './Loading';
@@ -65,6 +67,8 @@ const Chatroom = () => {
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [fullMessages, setFullMessages] = useState<MessageData[]>([]);
 
+  const [enbleNotifications, setEnableNotifications] = useState<Record<string, boolean>>({});
+
   // handle sending GIF
   const [gifPickerOpen, setGifPickerOpen] = useState(false);
 
@@ -73,9 +77,6 @@ const Chatroom = () => {
 
   // handle if update room name
   const [refreshKey, setRefreshKey] = useState(0);
-
-  // handle notification permission
-  // const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const messageAreaRef = useRef<HTMLDivElement>(null);
 
@@ -130,6 +131,22 @@ const Chatroom = () => {
     loadRoomImage();
   }, [roomId]);
 
+  // Load Notification Settings
+  useEffect(() => {
+    const fetchNotify = async () => {
+      if(authUser && !loading){
+        const unsubscribe = await newRoomsAdded(authUser.uid, (rooms: UserRoom[]) => {
+          const notifications: Record<string, boolean> = {};
+          rooms.forEach((room) => {
+            notifications[room.roomId] = room.notification;
+          });
+          setEnableNotifications(notifications);
+        })
+      }
+    }
+    fetchNotify();
+  }, [authUser, loading]);
+
   // Update Messages
   useEffect(() => {
     if (roomId && !isLoading) {
@@ -140,6 +157,13 @@ const Chatroom = () => {
       return () => unsubscribe();
     }
   }, [roomId, isLoading]);
+
+  // Reset Unread Messages Count
+  useEffect(() => {
+    if(roomId){
+      resetUnreadCount(roomId);
+    }
+  }, [roomId]);
 
   // Auto Scroll to Bottom
   useEffect(() => {
@@ -169,23 +193,16 @@ const Chatroom = () => {
   }
 
   // Toggle Notification Button for current room
-  // const toggleNotificationButton = async () => {
-  //   const hasPermission = await requestNotificationPermission();
-  //   if (hasPermission) {
-  //     const newValue = !notificationsEnabled;
-  //     setNotificationsEnabled(newValue);
+  const toggleNotificationButton = async () => {
+    if(!roomId || !authUser) return;
 
-  //     if(roomId){
-  //       localStorage.setItem(`notifications_${roomId}`, newValue ? 'true' : 'false');
-  //       showAlert(
-  //         newValue ? 'Notifications enabled for this room' : 'Notifications disabled for this room',
-  //         'info'
-  //       );
-  //     }
-  //   }else{
-  //     showAlert('Notifications are disabled.', 'warning');
-  //   }
-  // }
+    const newValue = !enbleNotifications[roomId];
+    setEnableNotifications((prev) => ({
+      ...prev,
+      [roomId]: newValue
+    }));
+    await updateNotification(authUser.uid, roomId, newValue);
+  }
 
   if ((isLoading && !roomData) || loading) {
     return <Loading />;
@@ -203,8 +220,8 @@ const Chatroom = () => {
         </div>
         <div className="Nav-bar-Links">
           <IconButton
-            // className={`notification-button ${notificationsEnabled ? 'active' : ''}`}
-            // onClick={toggleNotificationButton}
+            className={`notification-button ${enbleNotifications[roomId ?? ''] ? 'active' : ''}`}
+            onClick={toggleNotificationButton}
           >
             <NotificationsActive fontSize="medium" />
           </IconButton>

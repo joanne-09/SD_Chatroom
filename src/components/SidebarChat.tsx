@@ -29,6 +29,7 @@ import {
 } from '@mui/icons-material'
 import { UseUser } from '../helper/UserContext';
 import { UseAlert } from '../helper/CreateAlert';
+import { UseUnreadMessages } from '../helper/UnreadMessages';
 import { newRoomsAdded, newFriendsAdded } from '../helper/AccessUser';
 import { joinExistRoom, updateRoomDoc } from '../helper/AccessRoom';
 import { ProfileImage, getImageData } from '../helper/AccessImage';
@@ -52,7 +53,7 @@ export const SideBar = (
   const [roomName, setRoomName] = useState<string>('');
 
   const [roomNotificationsEnabled, setRoomNotificationsEnabled] = useState<Record<string, boolean>>({});
-  const [unreadMessages, setUnreadMessages] = useState<Record<string, number>>({});
+  const { unreadMessages, markRoomAsRead } = UseUnreadMessages(authUser?.uid, rooms);
 
   const [friends, setFriends] = useState<UserFriend[]>([]);
   const [friendEmail, setFriendEmail] = useState<string>('');
@@ -185,7 +186,7 @@ export const SideBar = (
                   setRoomName(room.roomName);
                   setOpen(false);
 
-                  setUnreadMessages(prev => ({ ...prev, [room.roomId]: 0 }));
+                  markRoomAsRead(room.roomId);
                 }}
               >
                 <Avatar

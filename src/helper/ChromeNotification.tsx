@@ -1,7 +1,8 @@
-import { getUserById } from "./AccessUser";
+import { getUserById, getUserRoomById } from "./AccessUser";
 
-export const showNotification = (roomId: string, senderId: string, roomName: string, newMessage: any) => {
+export const showNotification = async (roomId: string, senderId: string, roomName: string, newMessage: any) => {
   console.log('Notification data:', roomId, senderId, roomName, newMessage);
+
   if (Notification.permission === 'granted') {
     getUserById(senderId).then((sender) => {
       if (!sender) {
