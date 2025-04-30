@@ -23,7 +23,7 @@ export const sendMessage = async (
         findRoomById(roomId, alertFunc).then((room) => {
             if (room) {
                 if (room.participants.includes(message.senderId) == false){
-                    alert('You are not a participant of this room. Please join the room first.');
+                    alertFunc('You are not a participant of this room. Please join the room first.', 'error');
                     return;
                 }
             }

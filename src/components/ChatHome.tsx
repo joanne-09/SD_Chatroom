@@ -5,9 +5,11 @@ import { ChatroomBlock } from './ChatroomBlock';
 import { Loading } from './Loading';
 import { UseUser } from '../helper/UserContext';
 import { newRoomsAdded, addFriendToUser } from '../helper/AccessUser';
+import { findRoomById } from '../helper/AccessRoom';
 import { listenAllRooms } from '../helper/AccessMessage';
 import { UserRoom } from '../helper/Interface';
 import { UseAlert } from '../helper/CreateAlert';
+import { showNotification } from '../helper/ChromeNotification';
 import { AccountMenu, StartChatButton } from '../helper/MuiComponents';
 import '../styles/ChatHome.css';
 
@@ -82,27 +84,19 @@ const ChatHome = () => {
             [roomId]: (prev[roomId] || 0) + 1
           }));
           
-          // Show notification if app is in background
-          if (document.visibilityState === 'hidden') {
-            const roomName = rooms.find(r => r.roomId === roomId)?.roomName || 'Chat';
-            const senderName = newMessage.senderEmail.split('@')[0];
-            
-            // Only show if notifications are enabled
-            if (Notification.permission === 'granted' && 
-                localStorage.getItem('notificationsEnabled') === 'true') {
-              
-              const notification = new Notification(`New message from ${senderName} in ${roomName}`, {
-                body: newMessage.messageType === 'text' ? newMessage.content : `Sent a ${newMessage.messageType}`,
-                icon: '/favicon.ico',
-              });
-
-              notification.onclick = () => {
-                window.focus();
-                navigate(`/chatroom/${roomId}`);
-                notification.close();
-              };
+          // Show notification
+          findRoomById(roomId, showAlert).then((room) => {
+            if (room) {
+              showNotification(
+                roomId,
+                newMessage.senderId,
+                room.name,
+                newMessage
+              );
+            } else {
+              console.error('Room not found:', roomId);
             }
-          }
+          });
         }
       );
       
@@ -130,7 +124,7 @@ const ChatHome = () => {
       <div className="Nav-bar">
         <div className="Nav-bar-Logo">
           {profile ? (
-            <p>Welcome, {profile.name}</p>
+            <p>{profile.name}</p>
           ) : (
             <p>Welcome</p>
           )}

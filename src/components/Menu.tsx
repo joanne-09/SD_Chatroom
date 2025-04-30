@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
   styled
 } from '@mui/material';
+import { UseAlert } from '../helper/CreateAlert';
 import '../styles/Menu.css';
 
 const MenuButton = styled(Button)({
@@ -24,6 +25,40 @@ const MenuButton = styled(Button)({
 
 const Menu = () => {
   const navigate = useNavigate();
+  const { showAlert } = UseAlert();
+
+  // Request Chrome Notification permission
+  const requestNotification = async () => {
+    if(!("Notification" in window)) {
+      showAlert("This browser does not support desktop notifications.", "error");
+      return false;
+    }
+
+    if(Notification.permission === "granted") {
+      localStorage.setItem("notificationsEnabled", "true");
+      return true;
+    }
+
+    if (Notification.permission !== "denied") {
+      const permission = await Notification.requestPermission();
+      const granted = permission === "granted";
+      localStorage.setItem('notificationsEnabled', granted ? 'true' : 'false');
+      
+      if (granted) {
+        showAlert("Notifications enabled!", "success");
+      } else {
+        showAlert("Notification permission denied. You won't receive alerts for new messages.", "info");
+      }
+      
+      return granted;
+    }
+    
+    return false;
+  }
+
+  useEffect(() => {
+    requestNotification();
+  }, []);
 
   return (
     <div className="Menu">

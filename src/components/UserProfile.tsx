@@ -14,6 +14,7 @@ import '../styles/UserProfile.css';
 
 const UserProfile = () => {
 	const { authUser, profile, loading } = UseUser();
+	const { showAlert } = UseAlert();
 	const navigate = useNavigate();
 
 	const [ name, setName ] = useState(profile?.name || '');
@@ -92,11 +93,11 @@ const UserProfile = () => {
 									phone,
 									address
 								} as Partial<UserData>).then(() => {
-									alert('Profile updated successfully!');
+									showAlert('Profile updated successfully!', 'success');
 									setRefreshKey((prev) => prev + 1);
 								}).catch((error) => {
 									console.error('Error updating profile:', error);
-									alert('Failed to update profile');
+									showAlert('Failed to update profile', 'error');
 								});
 							}}
 						}

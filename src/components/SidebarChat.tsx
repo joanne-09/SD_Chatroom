@@ -231,7 +231,7 @@ export const SideBar = (
           className="add-friend-button"
           onClick={() => {
             if (!friendEmail) {
-              alert("Please select a friend to add.");
+              showAlert("Please select a friend to add.", "error");
               return;
             }
             const friendId = friends.find(friend => friend.friendEmail === friendEmail)?.friendId;

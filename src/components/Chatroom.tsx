@@ -84,7 +84,6 @@ const Chatroom = () => {
     if (!authUser && !loading) {
       showAlert("No authenticated user found.", "error");
       setTimeout(() => { navigate('/chatHome') }, 1500);
-      alert("No authenticated user found.");
     }
   }, [authUser, navigate, loading]);
 
