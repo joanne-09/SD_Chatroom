@@ -36,11 +36,14 @@
   gap: 20px;
 }
 
-.Nav-bar-Links .search-button {
+.Nav-bar-Links .search-button, 
+.Nav-bar-Links .notification-button {
   color: var(--color-navbar-logo);
 }
 
-.Nav-bar-Links .search-button:hover {
+.Nav-bar-Links .search-button:hover, 
+.Nav-bar-Links .notification-button:hover,
+.Nav-bar-Links .notification-button.active {
   color: var(--color-text-orange);
   background-color: transparent;
   transform: scale(1.1);

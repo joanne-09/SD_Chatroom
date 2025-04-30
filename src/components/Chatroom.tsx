@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
 import { firestore } from '../config';
 import {
   TextField,
@@ -11,11 +11,13 @@ import {
   Close,
   Send,
   Gif,
+  NotificationsActive,
 } from '@mui/icons-material';
 import { UseUser } from '../helper/UserContext';
 import { UseAlert } from '../helper/CreateAlert';
 import { findRoomById } from '../helper/AccessRoom';
-import { sendMessage, getAllMessages, newMessageAdded, newMessageDeleted } from '../helper/AccessMessage';
+import { sendMessage, getAllMessages, newMessageAdded } from '../helper/AccessMessage';
+import { getImageData } from '../helper/AccessImage';
 import GifPicker from './GifPicker';
 import { ChatroomData, MessageData } from '../helper/Interface';
 import { SideBar } from './SidebarChat';
@@ -56,13 +58,12 @@ const Chatroom = () => {
 
   const { roomId } = useParams<{ roomId: string }>();
   const [roomData, setRoomData] = useState<ChatroomData>({} as ChatroomData);
+  const [roomImages, setRoomImages] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [fullMessages, setFullMessages] = useState<MessageData[]>([]);
-
-  const [deleteMsg, setDeleteMsg] = useState<string[]>([]);
 
   // handle sending GIF
   const [gifPickerOpen, setGifPickerOpen] = useState(false);
@@ -73,13 +74,16 @@ const Chatroom = () => {
   // handle if update room name
   const [refreshKey, setRefreshKey] = useState(0);
 
+  // handle notification permission
+  // const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
   const messageAreaRef = useRef<HTMLDivElement>(null);
 
   // Check if user is authenticated
   useEffect(() => {
     if (!authUser && !loading) {
       showAlert("No authenticated user found.", "error");
-      setTimeout(() => {navigate('/chatHome')}, 1500);
+      setTimeout(() => { navigate('/chatHome') }, 1500);
       alert("No authenticated user found.");
     }
   }, [authUser, navigate, loading]);
@@ -91,10 +95,10 @@ const Chatroom = () => {
       findRoomById(roomId, showAlert)
         .then((data) => {
           console.log("Room data:", data);
-          if(!data){
+          if (!data) {
             showAlert("Room not found.", "error");
-            setTimeout(() => {navigate('/chatHome')}, 1500);
-          }else{
+            setTimeout(() => { navigate('/chatHome') }, 1500);
+          } else {
             setRoomData(data);
           }
         }).catch((error) => {
@@ -105,26 +109,36 @@ const Chatroom = () => {
         });
     }
   }, [roomId, authUser, refreshKey]);
-  
+
+  // Load room Images
+  useEffect(() => {
+    const loadRoomImage = async () => {
+      if (roomId) {
+        try {
+          const imageUrl = await getImageData('roomcover', roomId);
+          if (imageUrl) {
+            setRoomImages(prev => ({
+              ...prev,
+              [roomId]: imageUrl
+            }));
+          }
+        } catch (error) {
+          console.error("Error loading room image:", error);
+        }
+      }
+    };
+
+    loadRoomImage();
+  }, [roomId]);
+
   // Update Messages
   useEffect(() => {
-    if(roomId && !isLoading){
+    if (roomId && !isLoading) {
       const unsubscribe = newMessageAdded(roomId, (newMessages: MessageData[]) => {
         setMessages(newMessages);
         setFullMessages(newMessages);
       });
       return () => unsubscribe();
-    }
-  }, [roomId, isLoading]);
-
-  useEffect(() => {
-    if(roomId && !isLoading){
-      const unsubscribeDelete = newMessageDeleted(roomId, (messageId: string) => {
-        setDeleteMsg((prev) => [...prev, messageId]);
-        console.log('Message deleted:', messageId);
-      });
-
-      return () => unsubscribeDelete();
     }
   }, [roomId, isLoading]);
 
@@ -137,7 +151,7 @@ const Chatroom = () => {
 
   // Send GIF
   const sendGif = (gifUrl: string) => {
-    if(roomId && authUser?.uid && profile?.email){
+    if (roomId && authUser?.uid && profile?.email) {
       const gifMessage: MessageData = {
         senderId: authUser.uid,
         senderEmail: profile.email,
@@ -155,6 +169,25 @@ const Chatroom = () => {
     setGifPickerOpen(false);
   }
 
+  // Toggle Notification Button for current room
+  // const toggleNotificationButton = async () => {
+  //   const hasPermission = await requestNotificationPermission();
+  //   if (hasPermission) {
+  //     const newValue = !notificationsEnabled;
+  //     setNotificationsEnabled(newValue);
+
+  //     if(roomId){
+  //       localStorage.setItem(`notifications_${roomId}`, newValue ? 'true' : 'false');
+  //       showAlert(
+  //         newValue ? 'Notifications enabled for this room' : 'Notifications disabled for this room',
+  //         'info'
+  //       );
+  //     }
+  //   }else{
+  //     showAlert('Notifications are disabled.', 'warning');
+  //   }
+  // }
+
   if ((isLoading && !roomData) || loading) {
     return <Loading />;
   }
@@ -171,10 +204,17 @@ const Chatroom = () => {
         </div>
         <div className="Nav-bar-Links">
           <IconButton
+            // className={`notification-button ${notificationsEnabled ? 'active' : ''}`}
+            // onClick={toggleNotificationButton}
+          >
+            <NotificationsActive fontSize="medium" />
+          </IconButton>
+
+          <IconButton
             className='search-button'
             onClick={() => setSearchOpen(!searchOpen)}
           >
-            {searchOpen ? <Close fontSize='medium'/> : <Search fontSize='medium'/>}
+            {searchOpen ? <Close fontSize='medium' /> : <Search fontSize='medium' />}
           </IconButton>
 
           <a onClick={() => navigate('/chatHome')}>Home</a>
@@ -182,34 +222,34 @@ const Chatroom = () => {
       </div>
 
       <div className='Content'>
-        <SideBar 
-          refresh={() => {setRefreshKey((prev) => prev + 1)}}
+        <SideBar
+          refresh={() => { setRefreshKey((prev) => prev + 1) }}
         />
 
         <div className='Chatroom-Content'>
           {
-          searchOpen && 
-          <div className='Search-Area'>
-            <CustomTextField
-              fullWidth
-              id="search-field"
-              label="Search messages"
-              variant="outlined"
-              size="small"
-              onChange={(e) => {
-                if(e.target.value === '') {
-                  setMessages(fullMessages);;
-                  return;
-                }
+            searchOpen &&
+            <div className='Search-Area'>
+              <CustomTextField
+                fullWidth
+                id="search-field"
+                label="Search messages"
+                variant="outlined"
+                size="small"
+                onChange={(e) => {
+                  if (e.target.value === '') {
+                    setMessages(fullMessages);
+                    return;
+                  }
 
-                const searchTerm = e.target.value.toLowerCase();
-                const filteredMessages = fullMessages.filter((msg) =>
-                  msg.content.toLowerCase().includes(searchTerm)
-                );
-                setMessages(filteredMessages);
-              }}
-            />
-          </div>
+                  const searchTerm = e.target.value.toLowerCase();
+                  const filteredMessages = fullMessages.filter((msg) =>
+                    msg.content.toLowerCase().includes(searchTerm)
+                  );
+                  setMessages(filteredMessages);
+                }}
+              />
+            </div>
           }
 
           <div className='Message-Area' ref={messageAreaRef}>
@@ -242,7 +282,7 @@ const Chatroom = () => {
                 mr: '8px',
               }}
             >
-              <Gif fontSize='large'/>
+              <Gif fontSize='large' />
             </IconButton>
 
             <CustomIconButton
@@ -257,12 +297,12 @@ const Chatroom = () => {
                       timestamp: '',
                     };
                     sendMessage(
-                      roomId, 
+                      roomId,
                       newmessage,
                       showAlert
                     )
-                      .then(()=> {setMessage('')})
-                      .catch((error) => {console.error('Error sending message:', error)});
+                      .then(() => { setMessage('') })
+                      .catch((error) => { console.error('Error sending message:', error) });
                   } else {
                     console.error("User ID is undefined.");
                   }
@@ -276,14 +316,12 @@ const Chatroom = () => {
           </div>
         </div>
 
-        <GifPicker 
+        <GifPicker
           open={gifPickerOpen}
           onClose={() => setGifPickerOpen(false)}
           onSelect={sendGif}
         />
       </div>
-
-      
     </div>
   );
 }

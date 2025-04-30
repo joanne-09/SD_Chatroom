@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Badge,
 } from '@mui/material'
 import {
   Menu,
@@ -31,12 +32,13 @@ import { UseAlert } from '../helper/CreateAlert';
 import { newRoomsAdded, newFriendsAdded } from '../helper/AccessUser';
 import { joinExistRoom, updateRoomDoc } from '../helper/AccessRoom';
 import { ProfileImage, getImageData } from '../helper/AccessImage';
-import { UserRoom, UserFriend, ChatroomData } from '../helper/Interface';
+import { listenAllRooms } from '../helper/AccessMessage';
+import { UserRoom, UserFriend, ChatroomData, MessageData } from '../helper/Interface';
 import '../styles/SidebarChat.css';
 
 export const SideBar = (
-  {refresh} :
-  {refresh: () => void}
+  { refresh }:
+    { refresh: () => void }
 ) => {
   const navigate = useNavigate();
   const { authUser, profile, loading } = UseUser();
@@ -48,6 +50,9 @@ export const SideBar = (
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
   const [activeRoomName, setActiveRoomName] = useState<string | null>(null);
   const [roomName, setRoomName] = useState<string>('');
+
+  const [roomNotificationsEnabled, setRoomNotificationsEnabled] = useState<Record<string, boolean>>({});
+  const [unreadMessages, setUnreadMessages] = useState<Record<string, number>>({});
 
   const [friends, setFriends] = useState<UserFriend[]>([]);
   const [friendEmail, setFriendEmail] = useState<string>('');
@@ -64,37 +69,37 @@ export const SideBar = (
   // Check if user is authenticated
   if (!authUser && !loading) {
     showAlert("No authenticated user found.", "error");
-    setTimeout(() => {navigate('/')}, 1500);
+    setTimeout(() => { navigate('/') }, 1500);
   }
 
+  // Load all room images
   const loadRoomImage = async (roomId: string) => {
-    try{
+    try {
       const image = await getImageData('roomcover', roomId);
       setRoomImages(prevImages => ({
         ...prevImages,
         [roomId]: image || null,
       }));
-    }catch(error){
+    } catch (error) {
       console.error('Error fetching room image:', error);
     }
   }
 
   // Get All Rooms for User
   useEffect(() => {
-      const fetchRooms = async () => {
-        if (authUser && !loading) {
-          const unsubscribe = await newRoomsAdded(authUser.uid, (rooms: UserRoom[]) => {
-            setRooms(rooms);
-            setIsLoading(false);
-          });
-          return () => unsubscribe();
-        }else{
-          setIsLoading(true);
-        }
-      };
-      fetchRooms();
-    }, [authUser, loading]
-  );
+    const fetchRooms = async () => {
+      if (authUser && !loading) {
+        const unsubscribe = await newRoomsAdded(authUser.uid, (rooms: UserRoom[]) => {
+          setRooms(rooms);
+          setIsLoading(false);
+        });
+        return () => unsubscribe();
+      } else {
+        setIsLoading(true);
+      }
+    };
+    fetchRooms();
+  }, [authUser, loading]);
 
   // Get All Friends for User
   useEffect(() => {
@@ -156,7 +161,7 @@ export const SideBar = (
             setSettings(true);
           }}
           aria-label="settings"
-          sx={{ color: 'var(--color-button-orange)'}}
+          sx={{ color: 'var(--color-button-orange)' }}
         >
           <Settings />
         </IconButton>
@@ -167,31 +172,36 @@ export const SideBar = (
       <List className="room-list">
         {rooms.length > 0 ? (
           rooms.map((room) => (
-            <ListItem 
-              key={room.roomId} 
-              disablePadding 
+            <ListItem
+              key={room.roomId}
+              disablePadding
               className={`room-item ${room.roomId === activeRoom ? 'active' : ''}`}
             >
-              <ListItemButton 
+              <ListItemButton
                 onClick={() => {
                   navigate(`/chatroom/${room.roomId}`);
                   setActiveRoom(room.roomId);
                   setActiveRoomName(room.roomName);
                   setRoomName(room.roomName);
                   setOpen(false);
+
+                  setUnreadMessages(prev => ({ ...prev, [room.roomId]: 0 }));
                 }}
               >
-                <Avatar 
+                <Avatar
                   className="room-avatar"
                   src={roomImages[room.roomId] || ''}
                 >
                   {!roomImages[room.roomId] && (room.roomName?.charAt(0).toUpperCase() || <Chat />)}
                 </Avatar>
-                <ListItemText 
-                  primary={room.roomName} 
+                <ListItemText
+                  primary={room.roomName}
                   secondary={room.roomId}
                   className="room-text"
                 />
+                {unreadMessages[room.roomId] > 0 && (
+                  <Badge badgeContent={unreadMessages[room.roomId]} color="error" />
+                )}
               </ListItemButton>
             </ListItem>
           ))
@@ -203,11 +213,11 @@ export const SideBar = (
       </List>
 
       <Divider />
-      
+
       <Box
         className="Add-Friends"
       >
-        <Autocomplete 
+        <Autocomplete
           disablePortal
           options={friends.map((friend) => friend.friendEmail)}
           renderInput={(params) => <TextField {...params} label="Add Friends" />}
@@ -225,7 +235,7 @@ export const SideBar = (
               return;
             }
             const friendId = friends.find(friend => friend.friendEmail === friendEmail)?.friendId;
-            if(activeRoom && friendId) {
+            if (activeRoom && friendId) {
               joinExistRoom(activeRoom, friendId, showAlert);
             }
             setFriendEmail('');
@@ -234,7 +244,7 @@ export const SideBar = (
           <Add />
         </IconButton>
       </Box>
-      
+
       <Dialog
         open={settings}
         onClose={() => setSettings(false)}
@@ -245,7 +255,7 @@ export const SideBar = (
         </DialogTitle>
 
         <DialogContent className="settings-content">
-          <ProfileImage 
+          <ProfileImage
             type="roomcover"
             roomId={activeRoom || ''}
             onImageUpdate={(imageUrl) => {
@@ -257,7 +267,7 @@ export const SideBar = (
             }}
           />
 
-          <TextField 
+          <TextField
             label="Room Name"
             variant="standard"
             fullWidth
@@ -277,16 +287,16 @@ export const SideBar = (
               const data: Partial<ChatroomData> = {
                 name: roomName,
               };
-              if(activeRoom){
+              if (activeRoom) {
                 updateRoomDoc(activeRoom, data, showAlert)
                   .then(() => {
                     setActiveRoomName(roomName);
                     setRoomName(roomName);
 
-                    setRooms(prevRooms => 
-                      prevRooms.map(room => 
-                        room.roomId === activeRoom 
-                          ? {...room, roomName: roomName} 
+                    setRooms(prevRooms =>
+                      prevRooms.map(room =>
+                        room.roomId === activeRoom
+                          ? { ...room, roomName: roomName }
                           : room
                       )
                     );
@@ -338,7 +348,7 @@ export const SideBar = (
       </Drawer>
 
       {/* Desktop sidebar */}
-      <Box 
+      <Box
         className="sidebar desktop-sidebar"
         sx={{ display: { xs: 'none', sm: 'flex' } }}
       >

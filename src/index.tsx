@@ -13,6 +13,19 @@ root.render(
   </React.StrictMode>
 );
 
+// Register service worker for notifications
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/notification-worker.js')
+      .then(registration => {
+        console.log('Service worker registered:', registration.scope);
+      })
+      .catch(error => {
+        console.error('Service worker registration failed:', error);
+      });
+  });
+}
+
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
