@@ -1,21 +1,22 @@
 .chatroom-block {
-    width: calc(100% - 40px);
-    background-color: var(--color-light);
-    border-radius: 10px;
-    box-shadow: var(--box-shadow);
+    width: 30vw;
+    min-width: 300px;
+    height: fit-content;
+    background-color: var(--color-green-light);
     display: flex;
-    margin: 10px 0 10px 10px;
-    padding: 0 10px 0 10px;
+    margin: 5px 0 5px 20px;
+    padding: 10px 20px 10px 20px;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.room-header {
-    display: flex;
-    align-items: center;
     justify-content: flex-start;
     gap: 10px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.chatroom-block:hover {
+    scale: 1.05;
+    background-color: var(--color-light);
+    transition: 0.3s;
 }
 
 .room-name {

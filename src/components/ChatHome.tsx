@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../config';
+import { Grid } from '@mui/material';
 import { ChatroomBlock } from './ChatroomBlock';
 import { Loading } from './Loading';
 import { UseUser } from '../helper/UserContext';
@@ -15,10 +16,10 @@ import '../styles/ChatHome.css';
 const ChatHome = () => {
   const navigate = useNavigate();
   const { authUser, profile, loading } = UseUser();
-  const {showAlert} = UseAlert();
+  const { showAlert } = UseAlert();
 
-  const [ isLoading, setIsLoading ] = useState(true);
-  const [ rooms, setRooms ] = useState<UserRoom[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [rooms, setRooms] = useState<UserRoom[]>([]);
 
   const { unreadMessages, markRoomAsRead } = UseUnreadMessages(authUser?.uid, rooms);
 
@@ -26,7 +27,7 @@ const ChatHome = () => {
   useEffect(() => {
     if (!authUser && !loading) {
       showAlert("No authenticated user found.", "error");
-      setTimeout(() => {navigate('/')}, 1500);
+      setTimeout(() => { navigate('/') }, 1500);
     }
   }, [authUser, loading, navigate]);
 
@@ -38,7 +39,7 @@ const ChatHome = () => {
     }
     auth.signOut().then(() => {
       showAlert("User signed out successfully!", "success");
-      setTimeout(() => {navigate('/')}, 1500);
+      setTimeout(() => { navigate('/') }, 1500);
     }).catch((error) => {
       showAlert("Error signing out" + error.message, "error");
     });
@@ -63,7 +64,7 @@ const ChatHome = () => {
           setIsLoading(false);
         });
         return () => unsubscribe();
-      }else{
+      } else {
         setIsLoading(true);
       }
     };
@@ -76,11 +77,11 @@ const ChatHome = () => {
     markRoomAsRead(roomId);
   };
 
-  if(isLoading || loading) {
+  if (isLoading || loading) {
     return <Loading />;
   }
 
-  return(
+  return (
     <div className='ChatHome'>
       <div className="Nav-bar">
         <div className="Nav-bar-Logo">
@@ -91,7 +92,7 @@ const ChatHome = () => {
           )}
         </div>
         <div className="Nav-bar-Links">
-          <AccountMenu 
+          <AccountMenu
             handleLogOut={handleLogOut}
             addFriend={addFriend}
           />
@@ -99,24 +100,28 @@ const ChatHome = () => {
       </div>
 
       <div className='ChatHome-Content'>
-        <div className='user-rooms'>
+        <Grid container className='user-rooms' spacing={2}>
           {
             rooms ? (
               rooms.map((room) => (
-                <ChatroomBlock 
-                  key={room.id} 
-                  room={room} 
-                  unreadCount={unreadMessages[room.roomId] || 0}
-                  onClick={() => handleRoomClick(room.roomId)}
-                />
+                <Grid key={room.id} sx={{xs: 12, sm: 6}}>
+                  <ChatroomBlock
+                    key={room.id}
+                    room={room}
+                    unreadCount={unreadMessages[room.roomId] || 0}
+                    onClick={() => handleRoomClick(room.roomId)}
+                  />
+                </Grid>
               ))
             ) : (
-              <p>No rooms Joined.</p>
+              <Grid sx={{xs: 12}}>
+                <p>No rooms Joined.</p>
+              </Grid>
             )
           }
-        </div>
+        </Grid>
 
-        <StartChatButton 
+        <StartChatButton
           alertFunc={showAlert}
         />
       </div>
