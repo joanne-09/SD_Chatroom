@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow authenticated users to read messages
+    match /messages/{messageId} {
+      allow read: if request.auth != null;
+      // Allow authenticated users to create messages
+      // Ensure the userId matches the authenticated user's ID
+      // Ensure the timestamp is set by the server
+      // Ensure the text is a string
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.timestamp == request.time
+                    && request.resource.data.text is string;
+
+      // Optionally allow users to delete their own messages (if needed)
+      // allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+
+      // Disallow updates for simplicity, unless needed
+      allow update: if false;
+    }
+  }
+}

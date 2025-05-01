@@ -12,11 +12,16 @@ type UserInfo = {
     address: string | null;
   } | null;
   loading: boolean;
+  clearUserContext?: () => void;
 };
 const UserContext = createContext<UserInfo>({ authUser: null, profile: null, loading: true });
 
 const UserChange = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserInfo>({ authUser: null, profile: null, loading: true });
+
+  const clearUserContext = () => {
+    setUser({ authUser: null, profile: null, loading: true });
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -68,7 +73,7 @@ const UserChange = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={user}>
+    <UserContext.Provider value={{...user, clearUserContext}}>
       {children}
     </UserContext.Provider>
   );

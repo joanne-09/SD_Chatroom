@@ -60,8 +60,19 @@ export const getUserByEmail = async (email: string) => {
 export const updateUserData = async (userId: string, data: Partial<UserData>) => {
     try{
         const userRef = doc(firestore, 'users', userId);
+        const friends = data.friends || [];
         await updateDoc(userRef, data);
         console.log('User data updated:', userId);
+
+        const updateUserFriends = friends.map(async (friend) => {
+            const userRef = query(collection(firestore, 'users', friend.friendId, 'friends'), where('friendId', '==', userId));
+            const userSnap = await getDocs(userRef);
+            const userDoc = userSnap.docs[0];
+            if (userDoc) {
+                await updateDoc(doc(firestore, 'users', friend.friendId, 'friends', userDoc.id), {friendName: data.name});
+                console.log('User friend document updated:', friend.friendId);
+            }
+        });
     }catch(error){
         console.error('Error updating user data:', error);
         throw error;

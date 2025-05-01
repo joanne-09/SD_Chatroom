@@ -202,7 +202,16 @@ export const ProfileImage = (
           variant="contained"
           component="span"
           disabled={uploading}
-          sx={{ mt: 2 }}
+          sx={{
+            mt: 2,
+            backgroundColor: 'var(--color-button-orange)',
+            color: 'var(--color-button-text)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              scale: 1.05,
+              backgroundColor: 'var(--color-button-orange-dark)',
+            },
+          }}
         >
           {uploading ? <CircularProgress size={24} /> : 'Upload Photo'}
         </Button>

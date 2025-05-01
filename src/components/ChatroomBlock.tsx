@@ -5,6 +5,7 @@ import {
   Avatar,
   Paper,
 } from '@mui/material'
+import { UseUser } from '../helper/UserContext';
 import { UseAlert } from '../helper/CreateAlert';
 import { findRoomById } from '../helper/AccessRoom';
 import { UserRoom } from '../helper/Interface';
@@ -14,6 +15,7 @@ export const ChatroomBlock = (
   { room, unreadCount = 0, onClick }:
     { room: UserRoom, unreadCount?: number, onClick?: () => void }
 ) => {
+  const { authUser } = UseUser();
   const navigate = useNavigate();
   const { showAlert } = UseAlert();
   const [roomImage, setRoomImage] = useState<string>('');
@@ -28,8 +30,8 @@ export const ChatroomBlock = (
         }
       });
     }
-    updateRoomImage();
-  }, [room, showAlert]);
+    if(authUser) updateRoomImage();
+  }, [authUser, room, showAlert]);
 
   return (
     <Paper

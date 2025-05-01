@@ -12,10 +12,11 @@ import { UserRoom } from '../helper/Interface';
 import { UseAlert } from '../helper/CreateAlert';
 import { AccountMenu, StartChatButton } from '../helper/MuiComponents';
 import '../styles/ChatHome.css';
+import { clear } from 'console';
 
 const ChatHome = () => {
   const navigate = useNavigate();
-  const { authUser, profile, loading } = UseUser();
+  const { authUser, profile, loading, clearUserContext } = UseUser();
   const { showAlert } = UseAlert();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -27,19 +28,25 @@ const ChatHome = () => {
   useEffect(() => {
     if (!authUser && !loading) {
       showAlert("No authenticated user found.", "error");
-      setTimeout(() => { navigate('/') }, 1500);
+      setTimeout(() => {navigate('/')}, 1500);
     }
   }, [authUser, loading, navigate]);
 
   // Log Out
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
     if (!authUser) {
       showAlert("No user is signed in.", "error");
       return;
     }
+
+    setRooms([]);
+    if(clearUserContext) clearUserContext();
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     auth.signOut().then(() => {
       showAlert("User signed out successfully!", "success");
-      setTimeout(() => { navigate('/') }, 1500);
+      setTimeout(() => {navigate('/')}, 500);
     }).catch((error) => {
       showAlert("Error signing out" + error.message, "error");
     });
@@ -57,6 +64,8 @@ const ChatHome = () => {
 
   // Get All Rooms for User
   useEffect(() => {
+    let unsubscribe: () => void = () => {};
+
     const fetchRooms = async () => {
       if (authUser && !loading) {
         const unsubscribe = await newRoomsAdded(authUser.uid, (rooms: UserRoom[]) => {
@@ -69,6 +78,8 @@ const ChatHome = () => {
       }
     };
     fetchRooms();
+
+    return () => unsubscribe();
   }, [authUser, loading]);
 
   // Reset unread count when navigating to a room

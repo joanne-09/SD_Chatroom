@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { UseUser } from './UserContext';
 import { UseAlert } from './CreateAlert';
 import { listenAllRooms } from './AccessMessage';
 import { findRoomById } from './AccessRoom';
@@ -42,6 +43,7 @@ export const UseUnreadMessages = (
   userId: string | null | undefined,
   rooms: UserRoom[]
 ) => {
+  const { authUser } = UseUser();
   const { showAlert } = UseAlert();
   const [unreadMessages, setUnreadMessages] = useState<Record<string, number>>(loadUnreadMessages());
   const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
@@ -62,7 +64,7 @@ export const UseUnreadMessages = (
 
   // Listen for new messages in all rooms
   useEffect(() => {
-    if (!userId || rooms.length === 0) return;
+    if (!authUser || !userId || rooms.length === 0) return () => {};
 
     const unsubscribe = listenAllRooms(
       userId,
@@ -94,8 +96,8 @@ export const UseUnreadMessages = (
       }
     );
 
-    return unsubscribe;
-  }, [userId, rooms, activeRoomId]);
+    return () => unsubscribe();
+  }, [authUser, userId, rooms, activeRoomId]);
 
   // Function to mark a room as read
   const markRoomAsRead = (roomId: string) => {
