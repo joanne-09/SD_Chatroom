@@ -59,6 +59,7 @@ const Chatroom = () => {
   const { showAlert } = UseAlert();
 
   const { roomId } = useParams<{ roomId: string }>();
+  const [permission, setPermission] = useState<boolean>(false);
   const [roomData, setRoomData] = useState<ChatroomData>({} as ChatroomData);
   const [roomImages, setRoomImages] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -92,6 +93,7 @@ const Chatroom = () => {
   useEffect(() => {
     if (roomId && authUser) {
       setIsLoading(true);
+      setPermission(false);
       findRoomById(roomId, showAlert)
         .then((data) => {
           console.log("Room data:", data);
@@ -99,7 +101,13 @@ const Chatroom = () => {
             showAlert("Room not found.", "error");
             setTimeout(() => { navigate('/chatHome') }, 1500);
           } else {
-            setRoomData(data);
+            if(data.participants && !data.participants.includes(authUser.uid)) {
+              showAlert("You are not a participant of this room.", "error");
+              setRoomData({} as ChatroomData);
+            }else{
+              setRoomData(data);
+              setPermission(true);
+            }
           }
         }).catch((error) => {
           console.error("Error fetching room:", error);
@@ -149,14 +157,14 @@ const Chatroom = () => {
 
   // Update Messages
   useEffect(() => {
-    if (roomId && !isLoading) {
+    if (permission && roomId && !isLoading) {
       const unsubscribe = newMessageAdded(roomId, (newMessages: MessageData[]) => {
         setMessages(newMessages);
         setFullMessages(newMessages);
       });
       return () => unsubscribe();
     }
-  }, [roomId, isLoading]);
+  }, [permission, roomId, isLoading]);
 
   // Reset Unread Messages Count
   useEffect(() => {
@@ -228,7 +236,7 @@ const Chatroom = () => {
 
           <IconButton
             className='search-button'
-            onClick={() => setSearchOpen(!searchOpen)}
+            onClick={() => {setMessages(fullMessages); setSearchOpen(!searchOpen);}}
           >
             {searchOpen ? <Close fontSize='medium' /> : <Search fontSize='medium' />}
           </IconButton>

@@ -146,18 +146,10 @@
     padding: 0 15px;
   }
   
-  .Nav-bar-Logo {
+  .Chatroom .Nav-bar-Logo {
     margin-left: 30px;
     font-size: 1.3em;
   }
-  
-  /* .Message-Area {
-    padding: 15px 10px;
-  }
-  
-  .Input-Area {
-    padding: 10px 15px;
-  } */
   
   .message-box {
     max-width: 90%;

@@ -20,18 +20,17 @@ export const sendMessage = async (
     alertFunc: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
 ) => {
     try {
-        findRoomById(roomId, alertFunc).then((room) => {
-            if (room) {
-                if (room.participants.includes(message.senderId) == false){
-                    alertFunc('You are not a participant of this room. Please join the room first.', 'error');
-                    return;
-                }
+        const room = await findRoomById(roomId, alertFunc);
+
+        if (room) {
+            if (room.participants.includes(message.senderId) == false){
+                alertFunc('You are not a participant of this room. Please join the room first.', 'error');
+                return;
             }
-        }).catch((error) => {
-            console.error('Error fetching room:', error);
-            alertFunc('Error fetching room:' + error, 'error');
+        }else{
+            console.log('Room not found. Please check the room ID.');
             return;
-        })
+        }
 
         const messageData: MessageData = {
             senderId: message.senderId,

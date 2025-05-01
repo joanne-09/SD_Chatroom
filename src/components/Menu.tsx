@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+  Typography,
   Button,
   styled
 } from '@mui/material';
@@ -80,9 +81,30 @@ const Menu = () => {
       </div>
 
       <div className="Menu-Content">
-        <h1 className="Title">
+        <Typography 
+          className="Title"
+          sx={{
+            fontSize: { xs: '2.5em', md: '4em' },
+            fontWeight: 900,
+            marginTop: '20vh',
+            background: `linear-gradient(90deg,
+              var(--color-bg-o-dark) 0%,
+              var(--color-bg-ol-dark) 25%,
+              var(--color-bg-g-dark) 50%,
+              var(--color-bg-gd-dark) 75%,
+              var(--color-bg-gdd-dark) 100%
+            )`,
+            backgroundSize: '400% 400%',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            animation: 'word-gradient 5s ease infinite',
+            transition: 'margin-bottom 3s',
+            zIndex: 2,
+            overflow: 'hidden',
+          }}
+        >
           Start your journey with us
-        </h1>
+        </Typography>
 
         <MenuButton
           variant='contained'

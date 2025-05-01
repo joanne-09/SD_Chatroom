@@ -74,6 +74,7 @@
 .friend-profile {
   width: 15vw;
   max-width: 350px;
+  min-width: 300px;
   height: auto !important;
   max-height: 500px;
   flex: 1;
@@ -109,5 +110,7 @@
   .profile-content {
     flex-direction: column;
     height: auto;
+    justify-content: center;
+    align-items: center;
   }
 }
